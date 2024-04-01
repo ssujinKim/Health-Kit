@@ -8,7 +8,7 @@
             "name": "sample_image",
             "inferResult": "SUCCESS",
             "message": "SUCCESS",
-            "validationResult": {
+            "vgitalidationResult": {
                 "result": "NO_REQUESTED"
             },
             "fields": [
