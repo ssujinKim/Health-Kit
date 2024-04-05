@@ -1,10 +1,19 @@
-// 회원가입 화면 04 (건강상태)
+// 회원가입 화면 04 (그 외 정보)
 // 비활성화 시키기
 import React, {useEffect, useState} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, TextInput} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useUser } from './UserContext';
+import axios from 'axios';
 
 export default function Health({navigation, route}) {
+  const [age, setAge] = useState(0);
+  const [height, setHeight] = useState(0);
+  const [weight, setWeight] = useState(0);
+  const [gender, setGender] = useState('');
+
+  const {updateUser, user} = useUser();
+
   useEffect(() => {
     navigation.setOptions({
       title: '회원가입',
@@ -14,126 +23,98 @@ export default function Health({navigation, route}) {
       },
       headerTintColor: 'black',
     });
-  }, []);
-  const [openDisease, setOpenDisease] = useState(false);
-  const [valueDisease, setValueDisease] = useState(null);
-  const [disease, setDisease] = useState([
-    {label: '당뇨', value: '1'},
-    {label: '고지혈증', value: '2'},
-    {label: '고혈압', value: '3'},
-  ]);
+  }, [navigation]);
 
-  const [openCondition, setOpenCondition] = useState(false);
-  const [valueCondition, setValueCondition] = useState(null);
-  const [condition, setCondition] = useState([
-    {label: '위', value: '1'},
-    /* {label: '------------------', value: '-', disabled: true}, 구분선 둘까말까 */
-    {label: '간', value: '2'},
-  ]);
-
-  const [openMedicine, setOpenMedicine] = useState(false);
-  const [valueMedicine, setValueMedicine] = useState(null);
-  const [medicine, setMedicine] = useState([
-    {label: '보기1', value: '1'},
-    {label: '보기2', value: '2'},
-  ]);
-
-  const handleOpenDisease = () => {
-    setOpenDisease(!openDisease);
-    setOpenCondition(false); // 다른 드롭다운 닫기
-    setOpenMedicine(false); // 다른 드롭다운 닫기
-  };
-
-  const handleOpenCondition = () => {
-    setOpenCondition(!openCondition);
-    setOpenDisease(false);
-    setOpenMedicine(false);
-  };
-
-  const handleOpenMedicine = () => {
-    setOpenMedicine(!openMedicine);
-    setOpenDisease(false);
-    setOpenCondition(false);
+  const signUp = () => {
+    const updateUser = { ...user, age, height, weight, gender };
+    axios.post('http://10.50.231.252:3000/signUp', updateUser)
+      .then(res => {
+        console.log(res.data);
+        // 회원가입 성공 후 할 일
+      })
+      .catch(error => {
+        // 전체 에러 객체를 로깅
+        console.log(error);
+  
+        // 에러 메시지만 출력
+        console.log("에러 메시지:", error.message);
+  
+        // HTTP 상태 코드가 있는 경우 출력
+        if (error.response) {
+          console.log("HTTP 상태 코드:", error.response.status);
+          console.log("응답 데이터:", error.response.data);
+          console.log("헤더 정보:", error.response.headers);
+        } else if (error.request) {
+          // 요청이 이루어졌으나 응답을 받지 못한 경우
+          console.log("요청 정보:", error.request);
+        } else {
+          // 요청 세팅 중 발생한 에러 정보
+          console.log('Error', error.message);
+        }
+  
+        // config 정보 출력
+        console.log(error.config);
+      });
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.contentText}>건강상태를 입력해주세요</Text>
+        <Text style={styles.contentText}>본인의 정보를 입력해주세요</Text>
         <View style={styles.form}>
           <View style={styles.inputContainer}>
+            <Text style={styles.textStyle}>나이</Text>
+            <TextInput value={age}
+            onChangeText={setAge}
+            keyboardType="numeric"
+            style={styles.input} underlineColorAndroid="transparent" />
+          </View>
+          <View style={styles.inputContainer}>
             <Text style={styles.textStyle}>키(cm)</Text>
-            <TextInput style={styles.input} underlineColorAndroid="transparent" />
+            <TextInput value={height}
+            onChangeText={setHeight}
+            keyboardType="numeric"
+            style={styles.input} underlineColorAndroid="transparent" />
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.textStyle}>몸무게(kg)</Text>
-            <TextInput style={styles.input} underlineColorAndroid="transparent" />
+            <TextInput value={weight}
+            onChangeText={setWeight}
+            keyboardType="numeric"
+            style={styles.input} underlineColorAndroid="transparent" />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.textStyle}>질병</Text>
-            <DropDownPicker
-              containerStyle={styles.dropdownContainer}
-              style={styles.dropdown}
-              open={openDisease}
-              value={valueDisease}
-              items={disease}
-              setOpen={handleOpenDisease}
-              setValue={setValueDisease}
-              setItems={setDisease}
-              placeholder=""
-              // listMode="MODAL"
-              modalProps={{
-                animationType: 'fade',
-              }}
-              // modalTitle="선택해주세요."
-            />
+            <Text style={styles.textStyle}>성별</Text>
+            <TouchableOpacity
+              onPress={() => setGender('male')}
+              style={[styles.radioButton, gender === 'male' && styles.selectedRadioButton]}
+            >
+              <View style={styles.radioButtonCircle}>
+                {gender === 'male' && <View style={styles.selectedRadioButtonCircle} />}
+              </View>
+              <Text style={styles.radioButtonText}>남자</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setGender('female')}
+              style={[styles.radioButton, gender === 'female' && styles.selectedRadioButton]}
+            >
+              <View style={styles.radioButtonCircle}>
+                {gender === 'female' && <View style={styles.selectedRadioButtonCircle} />}
+              </View>
+              <Text style={styles.radioButtonText}>여자</Text>
+            </TouchableOpacity>
           </View>
-          <View style={[styles.inputContainer, {zIndex: openDisease ? -1 : 1}]}>
-            <Text style={styles.textStyle}>여기가 안 좋아요</Text>
-            <DropDownPicker
-              containerStyle={styles.dropdownContainer}
-              style={styles.dropdown}
-              open={openCondition}
-              value={valueCondition}
-              items={condition}
-              setOpen={handleOpenCondition}
-              setValue={setValueCondition}
-              setItems={setCondition}
-              placeholder=""
-              // listMode="MODAL"
-              modalProps={{
-                animationType: 'fade',
-              }}
-              // modalTitle="선택해주세요."
-            />
-          </View>
-          <View style={[styles.inputContainer, {zIndex: openDisease || openCondition ? -1 : 1}]}>
-            <Text style={styles.textStyle}>복용중인 약</Text>
-            <DropDownPicker
-              containerStyle={styles.dropdownContainer}
-              style={styles.dropdown}
-              open={openMedicine}
-              value={valueMedicine}
-              items={medicine}
-              setOpen={handleOpenMedicine}
-              setValue={setValueMedicine}
-              setItems={setMedicine}
-              placeholder=""
-              // listMode="MODAL"
-              modalProps={{
-                animationType: 'fade',
-              }}
-              // modalTitle="선택해주세요."
-            />
-          </View>
+
         </View>
       </View>
       <View style={styles.continue}>
-        <TouchableOpacity style={styles.continueButton}>
+        <TouchableOpacity style={styles.continueButton} onPress={signUp}>
           <Text style={styles.continuebuttonText}>완료하기</Text>
         </TouchableOpacity>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -201,4 +182,29 @@ const styles = StyleSheet.create({
   dropdown: {
     width: '100%',
   },
+  radioButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginRight: 0,
+  },
+  radioButtonCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedRadioButtonCircle: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: '#000',
+  },
+  radioButtonText: {
+    fontSize: 16,
+    left: 7,
+  }
 });

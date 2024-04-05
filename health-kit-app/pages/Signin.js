@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {TextInput, StyleSheet, ScrollView, View, Text, TouchableOpacity, Image} from 'react-native';
 import logo from './../assets/logo.png';
 import Loading from '../components/Loading';
+import axios from 'axios';
 
 export default function Signin({navigation, route}) {
   const [ready, setReady] = useState(true);
@@ -13,6 +14,23 @@ export default function Signin({navigation, route}) {
     }, 1000);
   }, []);
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    const loginData = {
+      email: email,
+      password: password,
+    };
+    axios.post('http://10.50.231.252:3000/signIn', loginData)
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(error => {
+        console.log('로그인 실패: ', error);
+      });
+  };
+
   return ready ? (
     <Loading />
   ) : (
@@ -21,19 +39,17 @@ export default function Signin({navigation, route}) {
       <View style={styles.bodyContainer}>
         <TextInput
           style={styles.textInput}
-          onChangeText={(text) => {
-            this.setState({inputText: text});
-          }}
+          value={email}
+          onChangeText={setEmail}
           placeholder="이메일을 입력하세요."
         />
         <TextInput
           style={styles.textInput}
-          onChangeText={(text) => {
-            this.setState({inputText: text});
-          }}
+          value={password}
+          onChangeText={setPassword}
           placeholder="비밀번호를 입력하세요."
         />
-        <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>로그인</Text>
         </TouchableOpacity>
         <View style={styles.separator} />
