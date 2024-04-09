@@ -22,11 +22,12 @@ export default function Signin({navigation, route}) {
       email: email,
       password: password,
     };
-    axios.post('http://10.50.231.252:3000/signIn', loginData)
-      .then(res => {
+    axios
+      .post('http://10.50.231.252:3000/signIn', loginData)
+      .then((res) => {
         console.log(res.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log('로그인 실패: ', error);
       });
   };
@@ -49,7 +50,13 @@ export default function Signin({navigation, route}) {
           onChangeText={setPassword}
           placeholder="비밀번호를 입력하세요."
         />
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        {/* <TouchableOpacity style={styles.button} onPress={handleLogin}> */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate('MainPage');
+          }}
+        >
           <Text style={styles.buttonText}>로그인</Text>
         </TouchableOpacity>
         <View style={styles.separator} />

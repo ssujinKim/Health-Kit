@@ -6,6 +6,9 @@ import NicknamePage from '../pages/Signup/Nickname';
 import EmailPage from '../pages/Signup/Email';
 import PasswordPage from '../pages/Signup/Password';
 import HealthPage from '../pages/Signup/Health';
+import MainPage from '../pages/Main';
+import Mypage from '../pages/Mypage';
+import MypageInsertPage from '../pages/MypageInsert';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +32,15 @@ const StackNavigator = () => {
       <Stack.Screen name="EmailPage" component={EmailPage} />
       <Stack.Screen name="PasswordPage" component={PasswordPage} />
       <Stack.Screen name="HealthPage" component={HealthPage} />
+      <Stack.Screen
+        name="MainPage"
+        component={MainPage}
+        options={{
+          headerLeft: null,
+        }}
+      />
+      <Stack.Screen name="Mypage" component={Mypage} />
+      <Stack.Screen name="MypageInsertPage" component={MypageInsertPage} />
     </Stack.Navigator>
   );
 };
