@@ -2,8 +2,12 @@
 // content, contentCheck도 비활성화(?)되게 하기
 import React, {useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, TextInput} from 'react-native';
+import { useUser } from './UserContext';
 
 export default function Password({navigation, route}) {
+  const [password, setPassword] = useState('');
+  const {updateUser} = useUser();
+
   useEffect(() => {
     navigation.setOptions({
       title: '회원가입',
@@ -13,7 +17,12 @@ export default function Password({navigation, route}) {
       },
       headerTintColor: 'black',
     });
-  }, []);
+  }, [navigation]);
+
+  const handleNext = () => {
+    updateUser('password', password);
+    navigation.navigate('HealthPage');
+  }
 
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
@@ -29,6 +38,8 @@ export default function Password({navigation, route}) {
           ]}
         >
           <TextInput
+            value={password}
+            onChangeText={setPassword}
             style={styles.input}
             underlineColorAndroid="transparent"
             placeholder="8자리 이상 영어와 숫자를 입력해주세요"
@@ -57,9 +68,7 @@ export default function Password({navigation, route}) {
       <View style={styles.continue}>
         <TouchableOpacity
           style={styles.continueButton}
-          onPress={() => {
-            navigation.navigate('HealthPage');
-          }}
+          onPress={handleNext}
         >
           <Text style={styles.continuebuttonText}>계속하기</Text>
         </TouchableOpacity>

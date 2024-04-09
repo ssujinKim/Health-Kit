@@ -1,8 +1,12 @@
 // 회원가입 화면 01 (닉네임)
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, TextInput} from 'react-native';
+import { useUser } from './UserContext';
 
 export default function Nickname({navigation, route}) {
+  const [nickname, setNickname] = useState('');
+  const {updateUser} = useUser();
+
   useEffect(() => {
     navigation.setOptions({
       title: '회원가입',
@@ -12,13 +16,21 @@ export default function Nickname({navigation, route}) {
       },
       headerTintColor: 'black',
     });
-  }, []);
+  }, [navigation]);
+
+  const handleNext = () => {
+    updateUser('nickname', nickname);
+    navigation.navigate('EmailPage');
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.contentText}>닉네임을 입력해주세요</Text>
         <View style={styles.inputContainer}>
           <TextInput
+            value={nickname}
+            onChangeText={setNickname}
             style={styles.input}
             underlineColorAndroid="transparent" // 안드로이드에서 기본 밑줄을 제거
           />
@@ -30,9 +42,7 @@ export default function Nickname({navigation, route}) {
       <View style={styles.continue}>
         <TouchableOpacity
           style={styles.continueButton}
-          onPress={() => {
-            navigation.navigate('EmailPage');
-          }}
+          onPress={handleNext}
         >
           <Text style={styles.continuebuttonText}>계속하기</Text>
         </TouchableOpacity>
