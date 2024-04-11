@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {TextInput, StyleSheet, ScrollView, View, Text, TouchableOpacity, Image} from 'react-native';
+import {TextInput, StyleSheet, ScrollView, View, Text, TouchableOpacity, Image, Alert} from 'react-native';
 import logo from './../assets/logo.png';
 import Loading from '../components/Loading';
 import axios from 'axios';
@@ -25,10 +25,25 @@ export default function Signin({navigation, route}) {
     axios
       .post('http://10.50.231.252:3000/signIn', loginData)
       .then((res) => {
-        console.log(res.data);
+        if (email === '' || password === '') {
+          Alert.alert(
+            "입력 오류",
+            "모든 정보를 입력해주세요.",
+            [{ text: "확인" }]
+          );
+          return; // 필수 정보가 누락되었으므로 여기서 함수 종료
+        }
+        if (res.data.login) {
+          console.log(res.data.message);
+          Alert.alert(res.data.message, "메인 화면으로 이동합니다.", 
+          [{ text: "확인", onPress: () => navigation.navigate('MainPage') }]);
+        } else {
+          console.log(res.data.message);
+          Alert.alert("로그인 실패", res.data.message, [{text: '확인'}]);
+        }
       })
       .catch((error) => {
-        console.log('로그인 실패: ', error);
+        console.log('에러 발생: ', error);
       });
   };
 
@@ -50,13 +65,13 @@ export default function Signin({navigation, route}) {
           onChangeText={setPassword}
           placeholder="비밀번호를 입력하세요."
         />
-        {/* <TouchableOpacity style={styles.button} onPress={handleLogin}> */}
-        <TouchableOpacity
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        {/* <TouchableOpacity
           style={styles.button}
           onPress={() => {
             navigation.navigate('MainPage');
           }}
-        >
+        > */}
           <Text style={styles.buttonText}>로그인</Text>
         </TouchableOpacity>
         <View style={styles.separator} />

@@ -1,11 +1,14 @@
 // 회원가입 화면 03 (비밀번호)
 // content, contentCheck도 비활성화(?)되게 하기
 import React, {useEffect, useState} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, TextInput} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
 import { useUser } from './UserContext';
 
 export default function Password({navigation, route}) {
   const [password, setPassword] = useState('');
+  const [password2, setPassword2] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordCheck, setPasswordCheck] = useState('');
   const {updateUser} = useUser();
 
   useEffect(() => {
@@ -19,19 +22,38 @@ export default function Password({navigation, route}) {
     });
   }, [navigation]);
 
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
+    return regex.test(password);
+  };
+  const validatePassword2 = (password, password2) => {
+    return password === password2;
+  };
+
   const handleNext = () => {
+    // 비밀번호 유효성 검사
+    if (!validatePassword(password)) {
+      Alert.alert('오류', '비밀번호는 4자 이상이며, 최소 하나의 영문자와 하나의 숫자를 포함해야 합니다.', [{text: '확인'}]);
+      return;
+    }
+    // 비밀번호 재입력 검사
+    if (!validatePassword2(password, password2)) {
+      Alert.alert('오류', '입력하신 비밀번호가 일치하지 않습니다.', [{text: '확인'}]);
+      return;
+    }
     updateUser('password', password);
     navigation.navigate('HealthPage');
-  }
+  };
 
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-  const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
+  // const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  // const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.contentText}>비밀번호를 입력해주세요</Text>
-        <View
+        {/* <View
           style={[
             styles.inputContainer,
             {borderBottomColor: isPasswordFocused ? 'black' : 'lightgray'},
@@ -46,11 +68,33 @@ export default function Password({navigation, route}) {
             onFocus={() => setIsPasswordFocused(true)}
             onBlur={() => setIsPasswordFocused(false)}
           />
+        </View> */}
+        <View
+          style={[
+            styles.inputContainer,
+            {borderBottomColor: passwordError ? 'red' : 'lightgray'},
+          ]}
+        >
+          <TextInput
+            value={password}
+            onChangeText={(text) => {
+              setPassword(text);
+              setPasswordError(!validatePassword(text));
+            }}
+            style={styles.input}
+            underlineColorAndroid="transparent"
+            placeholder="4자리 이상 영어와 숫자를 입력해주세요"
+            onFocus={() => setPasswordError('')}
+          />
         </View>
+        {passwordError && (
+          <Text style={{color: 'red'}}>비밀번호는 4자 이상이며, 
+          최소 하나의 영문자와 하나의 숫자를 포함해야 합니다.</Text>
+        )}
       </View>
       <View style={styles.contentCheck}>
         <Text style={styles.contentText}>비밀번호 확인</Text>
-        <View
+        {/* <View
           style={[
             styles.inputContainer,
             {borderBottomColor: isConfirmPasswordFocused ? 'black' : 'lightgray'},
@@ -63,7 +107,28 @@ export default function Password({navigation, route}) {
             onFocus={() => setIsConfirmPasswordFocused(true)}
             onBlur={() => setIsConfirmPasswordFocused(false)}
           />
+        </View> */}
+        <View
+          style={[
+            styles.inputContainer,
+            {borderBottomColor: passwordCheck ? 'red' : 'lightgray'},
+          ]}
+        >
+          <TextInput
+            value={password2}
+            onChangeText={(text) => {
+              setPassword2(text);
+              setPasswordCheck(!validatePassword2(password, text));
+            }}
+            style={styles.input}
+            underlineColorAndroid="transparent"
+            placeholder="다시 한 번 입력해주세요"
+            onFocus={() => setPasswordCheck('')}
+          />
         </View>
+        {passwordCheck && (
+          <Text style={{color: 'red'}}>비밀번호가 일치하지 않습니다.</Text>
+        )}
       </View>
       <View style={styles.continue}>
         <TouchableOpacity
@@ -74,6 +139,7 @@ export default function Password({navigation, route}) {
         </TouchableOpacity>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
