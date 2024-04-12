@@ -46,11 +46,11 @@ export default function Mypage({navigation, route}) {
           <Text style={styles.statusOutput}>24세</Text>
         </View>
         <View style={styles.statusContainer}>
-          <Text style={styles.statusInput}>질병(cm)</Text>
+          <Text style={styles.statusInput}>질병</Text>
           <Text style={styles.statusOutput}>고지혈증</Text>
         </View>
         <View style={styles.statusContainer}>
-          <Text style={styles.statusInput}>복용중인 약(cm)</Text>
+          <Text style={styles.statusInput}>복용중인 약</Text>
           <Text style={styles.statusOutput}>뽀또맛 사탕</Text>
         </View>
       </View>

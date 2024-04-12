@@ -1,7 +1,7 @@
 // 회원가입 화면 04 (그 외 정보)
 // 비활성화 시키기
 import React, {useEffect, useState} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useUser } from './UserContext';
 import axios from 'axios';
@@ -26,36 +26,43 @@ export default function Health({navigation, route}) {
   }, [navigation]);
 
   const signUp = () => {
+    // 필수 입력 필드 확인
+    if (age === 0 || height === 0 || weight === 0 || gender === '') {
+      Alert.alert(
+        "입력 오류",
+        "모든 정보를 입력해주세요.",
+        [{ text: "확인" }]
+      );
+      return; // 필수 정보가 누락되었으므로 여기서 함수 종료
+    }
+  
+    // 모든 필수 입력 필드가 채워졌다면, 회원가입 절차 진행
     const updateUser = { ...user, age, height, weight, gender };
     axios.post('http://10.50.231.252:3000/signUp', updateUser)
       .then(res => {
         console.log(res.data);
         // 회원가입 성공 후 할 일
+        Alert.alert(
+          "회원가입 성공",
+          "로그인 화면으로 이동합니다.",
+          [{ text: "확인", onPress: () => navigation.navigate('SigninPage') }]
+        );
       })
       .catch(error => {
-        // 전체 에러 객체를 로깅
+        // 에러 처리 로직
         console.log(error);
-  
-        // 에러 메시지만 출력
         console.log("에러 메시지:", error.message);
-  
-        // HTTP 상태 코드가 있는 경우 출력
         if (error.response) {
           console.log("HTTP 상태 코드:", error.response.status);
-          console.log("응답 데이터:", error.response.data);
-          console.log("헤더 정보:", error.response.headers);
         } else if (error.request) {
-          // 요청이 이루어졌으나 응답을 받지 못한 경우
           console.log("요청 정보:", error.request);
         } else {
-          // 요청 세팅 중 발생한 에러 정보
           console.log('Error', error.message);
         }
-  
-        // config 정보 출력
         console.log(error.config);
       });
   };
+  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

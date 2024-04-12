@@ -14,6 +14,50 @@ const db = mysql.createConnection({
   database: "healthkit",
 });
 
+app.post("/checkNickname", (req, res) => {
+    const nickname = req.body.nickname;
+    console.log("닉네임 중복 확인 요청 받음", req.body);
+
+    db.query(
+        "SELECT * FROM USERS WHERE NICKNAME = ?", [nickname], (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send("서버 에러");
+            } else {
+                if (result.length > 0) {
+                    console.log("이미 사용 중인 닉네임입니다.");
+                    res.send({ isAvailable: false, message: "이미 사용 중인 닉네임입니다." });
+                } else {
+                    console.log("사용할 수 있는 닉네임입니다.");
+                    res.send({ isAvailable: true, message: "사용할 수 있는 닉네임입니다." });
+                }
+            }
+        }
+    );
+});
+
+app.post("/checkEmail", (req, res) => {
+    const email = req.body.email;
+    console.log("이메일 중복 확인 요청 받음", req.body);
+
+    db.query(
+        "SELECT * FROM USERS WHERE EMAIL = ?", [email], (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send("서버 에러");
+            } else {
+                if (result.length > 0) {
+                    console.log("이미 등록된 이메일입니다.");
+                    res.send({ isAvailable: false, message: "이미 등록된 이메일입니다." });
+                } else {
+                    console.log("사용할 수 있는 이메일입니다.");
+                    res.send({ isAvailable: true, message: "사용할 수 있는 이메일입니다." });
+                }
+            }
+        }
+    );
+});
+
 app.post("/signUp", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -50,18 +94,18 @@ app.post("/signIn", (req, res) => {
                 else if (results.length > 0) {
                     if (results[0].password == password) {
                         console.log("Login successfully!");
-                        res.send("Login successfully!");
+                        res.send({ login: true, message: "로그인 성공" });
                     }
                     else {
-                        res.send("비밀번호가 일치하지 않습니다.");
+                        res.send({ login: false, message: "비밀번호가 일치하지 않습니다." });
                     }
                 }
                 else if (results.length <= 0) {
-                    res.send("이메일 정보가 일치하지 않습니다.");
+                    res.send({ login: false, message: "등록되지 않은 회원 정보입니다." });
                 }
                 else {
                     console.log("Failed Login...");
-                    res.send("Failed Login...");
+                    res.send({ login: false, message: "다시 시도해 주세요." });
                 }
             }
         );
@@ -70,7 +114,6 @@ app.post("/signIn", (req, res) => {
         res.send("로그인 정보를 입력해주세요!");
     }
   });
-
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
