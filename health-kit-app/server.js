@@ -1,119 +1,111 @@
 const express = require("express");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const cors = require("cors");
+//const bcrypt = require('bcrypt');
+const db = require('./db');
 const app = express();
 const port = 3000;
 
 app.use(cors());
 app.use(express.json());
 
-const db = mysql.createConnection({
-  user: "root",
-  host: "localhost",
-  password: "Ktnwls1218*",
-  database: "healthkit",
-});
-
-app.post("/checkNickname", (req, res) => {
+app.post("/checkNickname", async (req, res) => { // async 함수를 사용
     const nickname = req.body.nickname;
     console.log("닉네임 중복 확인 요청 받음", req.body);
 
-    db.query(
-        "SELECT * FROM USERS WHERE NICKNAME = ?", [nickname], (err, result) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send("서버 에러");
-            } else {
-                if (result.length > 0) {
-                    console.log("이미 사용 중인 닉네임입니다.");
-                    res.send({ isAvailable: false, message: "이미 사용 중인 닉네임입니다." });
-                } else {
-                    console.log("사용할 수 있는 닉네임입니다.");
-                    res.send({ isAvailable: true, message: "사용할 수 있는 닉네임입니다." });
-                }
-            }
+    try {
+        const [result] = await db.query("SELECT * FROM USERS WHERE NICKNAME = ?", [nickname]); // await를 사용하여 비동기 쿼리를 기다립니다.
+        if (result.length > 0) {
+            console.log("이미 사용 중인 닉네임입니다.");
+            res.send({ isAvailable: false, message: "이미 사용 중인 닉네임입니다." });
+        } else {
+            console.log("사용할 수 있는 닉네임입니다.");
+            res.send({ isAvailable: true, message: "사용할 수 있는 닉네임입니다." });
         }
-    );
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("서버 에러");
+    }
 });
 
-app.post("/checkEmail", (req, res) => {
+app.post("/checkEmail", async (req, res) => {
     const email = req.body.email;
     console.log("이메일 중복 확인 요청 받음", req.body);
 
-    db.query(
-        "SELECT * FROM USERS WHERE EMAIL = ?", [email], (err, result) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send("서버 에러");
-            } else {
-                if (result.length > 0) {
-                    console.log("이미 등록된 이메일입니다.");
-                    res.send({ isAvailable: false, message: "이미 등록된 이메일입니다." });
-                } else {
-                    console.log("사용할 수 있는 이메일입니다.");
-                    res.send({ isAvailable: true, message: "사용할 수 있는 이메일입니다." });
-                }
-            }
+    try {
+        const [result] = await db.query("SELECT * FROM USERS WHERE EMAIL = ?", [email]);
+        if (result.length > 0) {
+            console.log("이미 등록된 이메일입니다.");
+            res.send({ isAvailable: false, message: "이미 등록된 이메일입니다." });
+        } else {
+            console.log("사용할 수 있는 이메일입니다.");
+            res.send({ isAvailable: true, message: "사용할 수 있는 이메일입니다." });
         }
-    );
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("서버 에러");
+    }
 });
 
-app.post("/signUp", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const nickname = req.body.nickname;
-  const age = req.body.age;
-  const height = req.body.height;
-  const weight = req.body.weight;
-  const gender = req.body.gender;
-  console.log("회원가입 요청 받음", req.body);
+app.post("/signUp", async (req, res) => {
+    const { email, password, nickname, age, height, weight, gender } = req.body;
+    console.log("회원가입 요청 받음", req.body);
 
-  db.query(
-    "INSERT INTO HEALTHKIT.USERS (EMAIL,PASSWORD,NICKNAME,AGE,HEIGHT,WEIGHT,GENDER) VALUES (?,?,?,?,?,?,?)",
-    [email, password, nickname, age, height, weight, gender],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
+    try {
+        await db.query("INSERT INTO HEALTHKIT.USERS (EMAIL, PASSWORD, NICKNAME, AGE, HEIGHT, WEIGHT, GENDER) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+        [email, password, nickname, age, height, weight, gender]);
         console.log("Inserted values successfully!");
         res.send("Inserted values successfully!");
-      }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("서버 에러 발생");
     }
-  );
 });
 
-app.post("/signIn", (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
+app.post("/signIn", async (req, res) => {
+    const { email, password } = req.body;
     console.log("로그인 요청 받음", req.body);
-  
-    if(email && password) {
-        db.query(
-            "SELECT * FROM users WHERE email = ?", [email], function (error, results) {
-                if (error) console.log(err);
-                else if (results.length > 0) {
-                    if (results[0].password == password) {
-                        console.log("Login successfully!");
-                        res.send({ login: true, message: "로그인 성공" });
-                    }
-                    else {
-                        res.send({ login: false, message: "비밀번호가 일치하지 않습니다." });
-                    }
-                }
-                else if (results.length <= 0) {
-                    res.send({ login: false, message: "등록되지 않은 회원 정보입니다." });
-                }
-                else {
-                    console.log("Failed Login...");
-                    res.send({ login: false, message: "다시 시도해 주세요." });
-                }
+
+    if (email && password) {
+        try {
+            const [results] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+            if (results.length > 0 && results[0].password == password) {
+                console.log("Login successfully!");
+                res.send({ login: true, message: "로그인 성공" });
+            } else if (results.length > 0) {
+                res.send({ login: false, message: "비밀번호가 일치하지 않습니다." });
+            } else {
+                res.send({ login: false, message: "등록되지 않은 회원 정보입니다." });
             }
-        );
-    }
-    else {
+        } catch (err) {
+            console.log(err);
+            res.status(500).send("서버 에러 발생");
+        }
+    } else {
         res.send("로그인 정보를 입력해주세요!");
     }
-  });
+});
+
+app.get('/userInfo', async (req, res) => {
+    const { email } = req.query;
+
+    if (!email) {
+        return res.status(400).send("이메일 파라미터가 필요합니다.");
+    }
+
+    try {
+        const [results] = await db.query("SELECT nickname, email, height, weight, age FROM users WHERE email = ?", [email]);
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).send("해당 이메일의 사용자를 찾을 수 없습니다.");
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("서버 오류가 발생했습니다.");
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)

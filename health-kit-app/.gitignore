@@ -35,5 +35,8 @@ yarn-error.*
 *.tsbuildinfo
 
 # db
-db.js
-sessionOption.js
+lib/
+.env
+
+# package
+yarn.lock
