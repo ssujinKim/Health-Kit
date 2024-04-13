@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   imageStyle: {
     height: 50,
     width: 100,
-    alignSelf: 'left',  //"flex-start"
+    alignSelf: 'left', //"flex-start"
     top: 40,
     left: 15,
     marginBottom: 20,
