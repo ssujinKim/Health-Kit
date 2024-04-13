@@ -3,19 +3,19 @@ import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native
 import {Ionicons} from '@expo/vector-icons';
 import axios from 'axios';
 
-export default function Mypage({ navigation, route }) {
-  const { email } = route.params;
+export default function Mypage({navigation, route}) {
+  const {email} = route.params;
   // 사용자 정보를 관리하는 상태를 추가
   const [userInfo, setUserInfo] = useState({
     nickname: '',
     email: '',
     height: 0,
     weight: 0,
-    age: 0
+    age: 0,
   });
 
   // userInfo에서 각 필드를 추출
-  const { nickname, height, weight, age } = userInfo;
+  const {nickname, height, weight, age} = userInfo;
 
   useEffect(() => {
     navigation.setOptions({
@@ -30,18 +30,19 @@ export default function Mypage({ navigation, route }) {
     const fetchUserInfo = () => {
       const url = `http://10.50.231.252:3000/userInfo?email=${encodeURIComponent(email)}`;
 
-      axios.get(url)
-        .then(response => {
+      axios
+        .get(url)
+        .then((response) => {
           const data = response.data;
           setUserInfo({
             nickname: data.nickname,
             email: data.email,
             height: data.height,
             weight: data.weight,
-            age: data.age
+            age: data.age,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('사용자 정보를 가져오는 동안 에러가 발생했습니다:', error);
         });
     };

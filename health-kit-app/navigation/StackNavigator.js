@@ -8,7 +8,8 @@ import PasswordPage from '../pages/Signup/Password';
 import HealthPage from '../pages/Signup/Health';
 import MainPage from '../pages/Main';
 import Mypage from '../pages/Mypage';
-import MypageInsertPage from '../pages/MypageInsert';
+import MypageinfoPage from '../pages/Mypageinfo';
+import MypagehealthPage from '../pages/Mypagehealth';
 
 const Stack = createStackNavigator();
 
@@ -40,7 +41,8 @@ const StackNavigator = () => {
         }}
       />
       <Stack.Screen name="Mypage" component={Mypage} />
-      <Stack.Screen name="MypageInsertPage" component={MypageInsertPage} />
+      <Stack.Screen name="MypageinfoPage" component={MypageinfoPage} />
+      <Stack.Screen name="MypagehealthPage" component={MypagehealthPage} />
     </Stack.Navigator>
   );
 };
