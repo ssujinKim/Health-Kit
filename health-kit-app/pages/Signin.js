@@ -36,7 +36,7 @@ export default function Signin({navigation, route}) {
         if (res.data.login) {
           console.log(res.data.message);
           Alert.alert(res.data.message, "메인 화면으로 이동합니다.", 
-          [{ text: "확인", onPress: () => navigation.navigate('MainPage') }]);
+          [{ text: "확인", onPress: () => navigation.navigate('MainPage', {email: email}) }]);
         } else {
           console.log(res.data.message);
           Alert.alert("로그인 실패", res.data.message, [{text: '확인'}]);

@@ -1,8 +1,22 @@
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import axios from 'axios';
 
-export default function Mypage({navigation, route}) {
+export default function Mypage({ navigation, route }) {
+  const { email } = route.params;
+  // 사용자 정보를 관리하는 상태를 추가
+  const [userInfo, setUserInfo] = useState({
+    nickname: '',
+    email: '',
+    height: 0,
+    weight: 0,
+    age: 0
+  });
+
+  // userInfo에서 각 필드를 추출
+  const { nickname, height, weight, age } = userInfo;
+
   useEffect(() => {
     navigation.setOptions({
       title: '마이페이지',
@@ -11,18 +25,39 @@ export default function Mypage({navigation, route}) {
       },
       headerTintColor: 'black',
     });
-  }, []);
+
+    // fetchUserInfo 함수를 정의
+    const fetchUserInfo = () => {
+      const url = `http://10.50.231.252:3000/userInfo?email=${encodeURIComponent(email)}`;
+
+      axios.get(url)
+        .then(response => {
+          const data = response.data;
+          setUserInfo({
+            nickname: data.nickname,
+            email: data.email,
+            height: data.height,
+            weight: data.weight,
+            age: data.age
+          });
+        })
+        .catch(error => {
+          console.error('사용자 정보를 가져오는 동안 에러가 발생했습니다:', error);
+        });
+    };
+
+    // useEffect 내부에서 fetchUserInfo를 호출하여 사용자 정보를 가져옴
+    fetchUserInfo();
+  }, [email]); // email이 변경될 때마다 useEffect를 다시 실행
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.myinformationContent}>
-        <TouchableOpacity onPress={() => navigation.navigate('MypageInsertPage')}>
-          <Text style={styles.name}>홍길동 님</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('MypageInsertPage', {email: email})}>
+          <Text style={styles.name}>{nickname} 님</Text>
           <Ionicons name="arrow-forward" size={24} color="black" />
         </TouchableOpacity>
-        {/* 본인의 이름 끌고와야 함 */}
-        <Text style={styles.email}>hong@abc.com</Text>
-        {/* 본인의 이메일 끌고와야 함 */}
+        <Text style={styles.email}>{email}</Text>
       </View>
       <View style={styles.horizontalLine1} />
       <View style={styles.diseaseContent}>
@@ -35,15 +70,15 @@ export default function Mypage({navigation, route}) {
       <View style={styles.health}>
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>키(cm)</Text>
-          <Text style={styles.statusOutput}>183cm</Text>
+          <Text style={styles.statusOutput}>{height}cm</Text>
         </View>
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>몸무게(kg)</Text>
-          <Text style={styles.statusOutput}>78kg</Text>
+          <Text style={styles.statusOutput}>{weight}kg</Text>
         </View>
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>나이</Text>
-          <Text style={styles.statusOutput}>24세</Text>
+          <Text style={styles.statusOutput}>{age}세</Text>
         </View>
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>질병</Text>

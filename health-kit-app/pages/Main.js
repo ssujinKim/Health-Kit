@@ -4,6 +4,8 @@ import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import logo from './../assets/logo.png';
 
 export default function Main({navigation, route}) {
+  const {email} = route.params;
+
   return (
     <ScrollView style={styles.container}>
       <Image source={logo} style={styles.imageStyle} />
@@ -11,7 +13,7 @@ export default function Main({navigation, route}) {
         <Ionicons name="notifications" size={32} color="gray" style={styles.icon} />
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('Mypage');
+            navigation.navigate('Mypage', {email: email});
           }}
         >
           <Ionicons name="settings" size={32} color="gray" style={styles.icon} />
@@ -62,7 +64,7 @@ const styles = StyleSheet.create({
   imageStyle: {
     height: 50,
     width: 100,
-    alignSelf: 'left',
+    alignSelf: 'left',  //"flex-start"
     top: 40,
     left: 15,
     marginBottom: 20,
