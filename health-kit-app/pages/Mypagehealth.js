@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {View, TouchableOpacity, Text, TextInput, StyleSheet, ScrollView} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, TextInput, ScrollView} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {Ionicons} from '@expo/vector-icons';
 
 export default function Health({navigation, route}) {
   useEffect(() => {
@@ -14,83 +13,96 @@ export default function Health({navigation, route}) {
       headerTintColor: 'black',
     });
   }, []);
-
-  const [openDisease, setOpenDisease] = useState([null]);
-  const [valueDisease, setValueDisease] = useState([null]);
-  const [disease, setDisease] = useState([
+  const [openDisease1, setOpenDisease1] = useState(false);
+  const [valueDisease1, setValueDisease1] = useState(null);
+  const [openDisease2, setOpenDisease2] = useState(false);
+  const [valueDisease2, setValueDisease2] = useState(null);
+  const [openDisease3, setOpenDisease3] = useState(false);
+  const [valueDisease3, setValueDisease3] = useState(null);
+  const [disease1, setDisease1] = useState([
     {label: '당뇨', value: '1'},
     {label: '고지혈증', value: '2'},
     {label: '고혈압', value: '3'},
+    {label: '배불러', value: '4'},
+    {label: '배고파', value: '5'},
+    {label: '고지혈증', value: '6'},
+    {label: '고혈압', value: '7'},
+    {label: '배불러', value: '8'},
+    {label: '배고파', value: '9'},
   ]);
 
-  const [openMedicine, setOpenMedicine] = useState([null]);
-  const [valueMedicine, setValueMedicine] = useState([null]);
-  const [medicine, setMedicine] = useState([
-    {label: '보기1', value: '1'},
-    {label: '보기2', value: '2'},
+  const [openMedicine1, setOpenMedicine1] = useState(false);
+  const [valueMedicine1, setValueMedicine1] = useState(null);
+  const [openMedicine2, setOpenMedicine2] = useState(false);
+  const [valueMedicine2, setValueMedicine2] = useState(null);
+  const [openMedicine3, setOpenMedicine3] = useState(false);
+  const [valueMedicine3, setValueMedicine3] = useState(null);
+  const [medicine1, setMedicine1] = useState([
+    {label: '약1', value: '1'},
+    {label: '약2', value: '2'},
   ]);
 
-  const handleAddDropdown = (type) => {
-    if (type === 'disease' && openDisease.length < 5) {
-      setOpenDisease([...openDisease, null]);
-      setValueDisease([...valueDisease, null]);
-    } else if (type === 'medicine' && openMedicine.length < 5) {
-      setOpenMedicine([...openMedicine, null]);
-      setValueMedicine([...valueMedicine, null]);
-    }
+  const handleOpenDisease1 = () => {
+    setOpenDisease1(!openDisease1);
+    setOpenDisease2(false);
+    setOpenDisease3(false);
+    setOpenMedicine1(false);
+    setOpenMedicine2(false);
+    setOpenMedicine3(false);
   };
 
-  const handleOpenDisease = (index) => {
-    const updatedOpenState = [...openDisease];
-    updatedOpenState[index] = !updatedOpenState[index];
-    setOpenDisease(updatedOpenState);
+  const handleOpenDisease2 = () => {
+    setOpenDisease2(!openDisease2);
+    setOpenDisease1(false);
+    setOpenDisease3(false);
+    setOpenMedicine1(false);
+    setOpenMedicine2(false);
+    setOpenMedicine3(false);
   };
 
-  const handleOpenMedicine = (index) => {
-    const updatedOpenState = [...openMedicine];
-    updatedOpenState[index] = !updatedOpenState[index];
-    setOpenMedicine(updatedOpenState);
+  const handleOpenDisease3 = () => {
+    setOpenDisease3(!openDisease3);
+    setOpenDisease1(false);
+    setOpenDisease2(false);
+    setOpenMedicine1(false);
+    setOpenMedicine2(false);
+    setOpenMedicine3(false);
   };
 
-  const handleSelectDisease = (index, newValue) => {
-    const updatedValueState = [...valueDisease];
-    updatedValueState[index] = newValue;
-    setValueDisease(updatedValueState);
+  const handleOpenMedicine1 = () => {
+    setOpenMedicine1(!openMedicine1);
+    setOpenDisease1(false);
+    setOpenDisease2(false);
+    setOpenDisease3(false);
+    setOpenMedicine2(false);
+    setOpenMedicine3(false);
   };
 
-  const handleSelectMedicine = (index, newValue) => {
-    const updatedValueState = [...valueMedicine];
-    updatedValueState[index] = newValue;
-    setValueMedicine(updatedValueState);
+  const handleOpenMedicine2 = () => {
+    setOpenMedicine2(!openMedicine2);
+    setOpenDisease1(false);
+    setOpenDisease2(false);
+    setOpenDisease3(false);
+    setOpenMedicine1(false);
+    setOpenMedicine3(false);
   };
 
-  const handleRemoveDropdown = (type, index) => {
-    if (type === 'disease') {
-      const updatedOpenState = [...openDisease];
-      updatedOpenState.splice(index, 1);
-      setOpenDisease(updatedOpenState);
-
-      const updatedValueState = [...valueDisease];
-      updatedValueState.splice(index, 1);
-      setValueDisease(updatedValueState);
-    } else if (type === 'medicine') {
-      const updatedOpenState = [...openMedicine];
-      updatedOpenState.splice(index, 1);
-      setOpenMedicine(updatedOpenState);
-
-      const updatedValueState = [...valueMedicine];
-      updatedValueState.splice(index, 1);
-      setValueMedicine(updatedValueState);
-    }
+  const handleOpenMedicine3 = () => {
+    setOpenMedicine3(!openMedicine3);
+    setOpenDisease1(false);
+    setOpenDisease2(false);
+    setOpenDisease3(false);
+    setOpenMedicine1(false);
+    setOpenMedicine2(false);
   };
 
   const [gender, setGender] = useState('');
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView contentContainerStyle={[styles.scrollViewContent, {paddingBottom: 1200}]}>
         <View style={styles.content}>
-          <Text style={styles.contentText}>건강상태를 수정해주세요</Text>
+          <Text style={styles.contentText}>기본 정보를 수정해주세요</Text>
           <View style={styles.form}>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>나이</Text>
@@ -125,65 +137,124 @@ export default function Health({navigation, route}) {
                 <Text style={styles.radioButtonText}>여자</Text>
               </TouchableOpacity>
             </View>
-            {openDisease.map((isOpen, index) => (
-              <View key={index} style={styles.dropContainer} zIndex={100}>
-                {index > 0 && (
-                  <TouchableOpacity onPress={() => handleRemoveDropdown('disease', index)}>
-                    <Ionicons name="remove" size={24} color="black" />
-                  </TouchableOpacity>
-                )}
-                <Text style={styles.textStyle}>질병</Text>
-                <DropDownPicker
-                  containerStyle={styles.dropdownContainer}
-                  style={styles.dropdown}
-                  open={isOpen}
-                  value={valueDisease[index]}
-                  items={disease}
-                  setOpen={() => handleOpenDisease(index)}
-                  setValue={(newValue) => handleSelectDisease(index, newValue)}
-                  setItems={setDisease}
-                  placeholder=""
-                  modalProps={{animationType: 'fade'}}
-                />
-              </View>
-            ))}
-            <TouchableOpacity
-              style={styles.diseaseContainer}
-              onPress={() => handleAddDropdown('disease')}
-            >
-              <Ionicons name="add" size={24} color="black" />
-              <Text style={styles.addDisease}>질병 추가하기</Text>
-            </TouchableOpacity>
 
-            {openMedicine.map((isOpen, index) => (
-              <View key={index} style={styles.dropContainer}>
-                {index > 0 && (
-                  <TouchableOpacity onPress={() => handleRemoveDropdown('medicine', index)}>
-                    <Ionicons name="remove" size={24} color="black" />
-                  </TouchableOpacity>
-                )}
-                <Text style={styles.textStyle}>복용약</Text>
-                <DropDownPicker
-                  containerStyle={styles.dropdownContainer}
-                  style={styles.dropdown}
-                  open={isOpen}
-                  value={valueMedicine[index]}
-                  items={medicine}
-                  setOpen={() => handleOpenMedicine(index)}
-                  setValue={(newValue) => handleSelectMedicine(index, newValue)}
-                  setItems={setMedicine}
-                  placeholder=""
-                  modalProps={{animationType: 'fade'}}
-                />
-              </View>
-            ))}
-            <TouchableOpacity
-              style={styles.medicineContainer}
-              onPress={() => handleAddDropdown('medicine')}
-            >
-              <Ionicons name="add" size={24} color="black" />
-              <Text style={styles.addMedicine}>약 추가하기</Text>
-            </TouchableOpacity>
+            <View style={styles.horizontalLine1} />
+            <Text style={[styles.contentText, {marginTop: 40, marginBottom: 20}]}>
+              질병을 선택해주세요
+            </Text>
+            <View style={[styles.inputContainer, {zIndex: 5}]}>
+              <Text style={styles.textStyle}>1.</Text>
+              <DropDownPicker
+                containerStyle={styles.dropdownContainer}
+                style={styles.dropdown}
+                open={openDisease1}
+                value={valueDisease1}
+                items={disease1}
+                setOpen={handleOpenDisease1}
+                setValue={setValueDisease1}
+                placeholder=""
+                // listMode="MODAL"
+                modalProps={{
+                  animationType: 'fade',
+                }}
+                // modalTitle="선택해주세요."
+              />
+            </View>
+            <View style={[styles.inputContainer, {zIndex: 4}]}>
+              <Text style={styles.textStyle}>2.</Text>
+              <DropDownPicker
+                containerStyle={styles.dropdownContainer}
+                style={styles.dropdown}
+                open={openDisease2}
+                value={valueDisease2}
+                items={disease1}
+                setOpen={handleOpenDisease2}
+                setValue={setValueDisease2}
+                placeholder=""
+                // listMode="MODAL"
+                modalProps={{
+                  animationType: 'fade',
+                }}
+                // modalTitle="선택해주세요."
+              />
+            </View>
+            <View style={[styles.inputContainer, {zIndex: 3}]}>
+              <Text style={styles.textStyle}>3.</Text>
+              <DropDownPicker
+                containerStyle={styles.dropdownContainer}
+                style={styles.dropdown}
+                open={openDisease3}
+                value={valueDisease3}
+                items={disease1}
+                setOpen={handleOpenDisease3}
+                setValue={setValueDisease3}
+                placeholder=""
+                // listMode="MODAL"
+                modalProps={{
+                  animationType: 'fade',
+                }}
+                // modalTitle="선택해주세요."
+              />
+            </View>
+
+            <View style={styles.horizontalLine2} />
+            <Text style={[styles.contentText, {marginTop: 40, marginBottom: 20}]}>
+              복용중인 약을 선택해주세요
+            </Text>
+            <View style={[styles.inputContainer, {zIndex: 2}]}>
+              <Text style={styles.textStyle}>1.</Text>
+              <DropDownPicker
+                containerStyle={styles.dropdownContainer}
+                style={styles.dropdown}
+                open={openMedicine1}
+                value={valueMedicine1}
+                items={medicine1}
+                setOpen={handleOpenMedicine1}
+                setValue={setValueMedicine1}
+                placeholder=""
+                // listMode="MODAL"
+                modalProps={{
+                  animationType: 'fade',
+                }}
+                // modalTitle="선택해주세요."
+              />
+            </View>
+            <View style={[styles.inputContainer, {zIndex: 1}]}>
+              <Text style={styles.textStyle}>2.</Text>
+              <DropDownPicker
+                containerStyle={styles.dropdownContainer}
+                style={styles.dropdown}
+                open={openMedicine2}
+                value={valueMedicine2}
+                items={medicine1}
+                setOpen={handleOpenMedicine2}
+                setValue={setValueMedicine2}
+                placeholder=""
+                // listMode="MODAL"
+                modalProps={{
+                  animationType: 'fade',
+                }}
+                // modalTitle="선택해주세요."
+              />
+            </View>
+            <View style={[styles.inputContainer]}>
+              <Text style={styles.textStyle}>3.</Text>
+              <DropDownPicker
+                containerStyle={styles.dropdownContainer}
+                style={styles.dropdown}
+                open={openMedicine3}
+                value={valueMedicine3}
+                items={medicine1}
+                setOpen={handleOpenMedicine3}
+                setValue={setValueMedicine3}
+                placeholder=""
+                // listMode="MODAL"
+                modalProps={{
+                  animationType: 'fade',
+                }}
+                // modalTitle="선택해주세요."
+              />
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -200,9 +271,6 @@ export default function Health({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollViewContent: {
-    paddingBottom: 1100,
   },
   content: {
     position: 'absolute',
@@ -234,32 +302,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'black',
   },
-  dropContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 60,
-    marginBottom: 10,
-  },
   dropdownContainer: {
     width: '65%',
-  },
-  diseaseContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  medicineContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  addDisease: {
-    marginLeft: 5,
-    fontSize: 16,
-  },
-  addMedicine: {
-    marginLeft: 5,
-    fontSize: 16,
   },
   radioButton: {
     flexDirection: 'row',
@@ -302,5 +346,23 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: 'black',
     fontWeight: 'bold',
+  },
+
+  horizontalLine1: {
+    position: 'absolute',
+    top: 325,
+    borderBottomColor: 'lightgray',
+    borderBottomWidth: 1,
+    width: '95%',
+    alignSelf: 'center',
+  },
+
+  horizontalLine2: {
+    position: 'absolute',
+    top: 655, // 이메일 텍스트 아래에 위치하도록 설정
+    borderBottomColor: 'lightgray',
+    borderBottomWidth: 1,
+    width: '95%',
+    alignSelf: 'center',
   },
 });

@@ -1,9 +1,18 @@
 // 회원가입 화면 04 (그 외 정보)
 // 비활성화 시키기
 import React, {useEffect, useState} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Alert,
+} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useUser } from './UserContext';
+import {useUser} from './UserContext';
 import axios from 'axios';
 
 export default function Health({navigation, route}) {
@@ -28,99 +37,101 @@ export default function Health({navigation, route}) {
   const signUp = () => {
     // 필수 입력 필드 확인
     if (age === 0 || height === 0 || weight === 0 || gender === '') {
-      Alert.alert(
-        "입력 오류",
-        "모든 정보를 입력해주세요.",
-        [{ text: "확인" }]
-      );
+      Alert.alert('입력 오류', '모든 정보를 입력해주세요.', [{text: '확인'}]);
       return; // 필수 정보가 누락되었으므로 여기서 함수 종료
     }
-  
+
     // 모든 필수 입력 필드가 채워졌다면, 회원가입 절차 진행
-    const updateUser = { ...user, age, height, weight, gender };
-    axios.post('http://10.50.231.252:3000/signUp', updateUser)
-      .then(res => {
+    const updateUser = {...user, age, height, weight, gender};
+    axios
+      .post('http://10.50.233.136:3000/signUp', updateUser)
+      .then((res) => {
         console.log(res.data);
         // 회원가입 성공 후 할 일
-        Alert.alert(
-          "회원가입 성공",
-          "로그인 화면으로 이동합니다.",
-          [{ text: "확인", onPress: () => navigation.navigate('SigninPage') }]
-        );
+        Alert.alert('회원가입 성공', '로그인 화면으로 이동합니다.', [
+          {text: '확인', onPress: () => navigation.navigate('SigninPage')},
+        ]);
       })
-      .catch(error => {
+      .catch((error) => {
         // 에러 처리 로직
         console.log(error);
-        console.log("에러 메시지:", error.message);
+        console.log('에러 메시지:', error.message);
         if (error.response) {
-          console.log("HTTP 상태 코드:", error.response.status);
+          console.log('HTTP 상태 코드:', error.response.status);
         } else if (error.request) {
-          console.log("요청 정보:", error.request);
+          console.log('요청 정보:', error.request);
         } else {
           console.log('Error', error.message);
         }
         console.log(error.config);
       });
   };
-  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.contentText}>본인의 정보를 입력해주세요</Text>
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.textStyle}>나이</Text>
-            <TextInput value={age}
-            onChangeText={setAge}
-            keyboardType="numeric"
-            style={styles.input} underlineColorAndroid="transparent" />
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.contentText}>본인의 정보를 입력해주세요</Text>
+          <View style={styles.form}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.textStyle}>나이</Text>
+              <TextInput
+                value={age}
+                onChangeText={setAge}
+                keyboardType="numeric"
+                style={styles.input}
+                underlineColorAndroid="transparent"
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.textStyle}>키(cm)</Text>
+              <TextInput
+                value={height}
+                onChangeText={setHeight}
+                keyboardType="numeric"
+                style={styles.input}
+                underlineColorAndroid="transparent"
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.textStyle}>몸무게(kg)</Text>
+              <TextInput
+                value={weight}
+                onChangeText={setWeight}
+                keyboardType="numeric"
+                style={styles.input}
+                underlineColorAndroid="transparent"
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.textStyle}>성별</Text>
+              <TouchableOpacity
+                onPress={() => setGender('male')}
+                style={[styles.radioButton, gender === 'male' && styles.selectedRadioButton]}
+              >
+                <View style={styles.radioButtonCircle}>
+                  {gender === 'male' && <View style={styles.selectedRadioButtonCircle} />}
+                </View>
+                <Text style={styles.radioButtonText}>남자</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setGender('female')}
+                style={[styles.radioButton, gender === 'female' && styles.selectedRadioButton]}
+              >
+                <View style={styles.radioButtonCircle}>
+                  {gender === 'female' && <View style={styles.selectedRadioButtonCircle} />}
+                </View>
+                <Text style={styles.radioButtonText}>여자</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.textStyle}>키(cm)</Text>
-            <TextInput value={height}
-            onChangeText={setHeight}
-            keyboardType="numeric"
-            style={styles.input} underlineColorAndroid="transparent" />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.textStyle}>몸무게(kg)</Text>
-            <TextInput value={weight}
-            onChangeText={setWeight}
-            keyboardType="numeric"
-            style={styles.input} underlineColorAndroid="transparent" />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.textStyle}>성별</Text>
-            <TouchableOpacity
-              onPress={() => setGender('male')}
-              style={[styles.radioButton, gender === 'male' && styles.selectedRadioButton]}
-            >
-              <View style={styles.radioButtonCircle}>
-                {gender === 'male' && <View style={styles.selectedRadioButtonCircle} />}
-              </View>
-              <Text style={styles.radioButtonText}>남자</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setGender('female')}
-              style={[styles.radioButton, gender === 'female' && styles.selectedRadioButton]}
-            >
-              <View style={styles.radioButtonCircle}>
-                {gender === 'female' && <View style={styles.selectedRadioButtonCircle} />}
-              </View>
-              <Text style={styles.radioButtonText}>여자</Text>
-            </TouchableOpacity>
-          </View>
-
+        </View>
+        <View style={styles.continue}>
+          <TouchableOpacity style={styles.continueButton} onPress={signUp}>
+            <Text style={styles.continuebuttonText}>완료하기</Text>
+          </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.continue}>
-        <TouchableOpacity style={styles.continueButton} onPress={signUp}>
-          <Text style={styles.continuebuttonText}>완료하기</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -213,5 +224,5 @@ const styles = StyleSheet.create({
   radioButtonText: {
     fontSize: 16,
     left: 7,
-  }
+  },
 });
