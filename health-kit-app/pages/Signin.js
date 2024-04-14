@@ -32,7 +32,7 @@ export default function Signin({navigation, route}) {
       password: password,
     };
     axios
-      .post('http://10.50.231.252:3000/signIn', loginData)
+      .post('http://10.50.233.136:3000/signIn', loginData)
       .then((res) => {
         if (email === '' || password === '') {
           Alert.alert('입력 오류', '모든 정보를 입력해주세요.', [{text: '확인'}]);
@@ -49,7 +49,17 @@ export default function Signin({navigation, route}) {
         }
       })
       .catch((error) => {
-        console.log('에러 발생: ', error);
+        // 에러 처리 로직
+        console.log(error);
+        console.log('에러 메시지:', error.message);
+        if (error.response) {
+          console.log('HTTP 상태 코드:', error.response.status);
+        } else if (error.request) {
+          console.log('요청 정보:', error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+        console.log(error.config);
       });
   };
 
@@ -70,14 +80,9 @@ export default function Signin({navigation, route}) {
           value={password}
           onChangeText={setPassword}
           placeholder="비밀번호를 입력하세요."
+          secureTextEntry={true}
         />
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          {/* <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            navigation.navigate('MainPage');
-          }}
-        > */}
           <Text style={styles.buttonText}>로그인</Text>
         </TouchableOpacity>
         <View style={styles.separator} />

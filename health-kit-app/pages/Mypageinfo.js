@@ -1,8 +1,22 @@
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import axios from 'axios';
 
-export default function Mypageinfo({navigation, route}) {
+export default function MypageInsert({navigation, route}) {
+  const {email} = route.params;
+  // 사용자 정보를 관리하는 상태를 추가
+  const [userInfo, setUserInfo] = useState({
+    nickname: '',
+    email: '',
+    height: 0,
+    weight: 0,
+    age: 0,
+  });
+
+  // userInfo에서 각 필드를 추출
+  const {nickname, height, weight, age} = userInfo;
+
   useEffect(() => {
     navigation.setOptions({
       title: '마이페이지',
@@ -11,7 +25,31 @@ export default function Mypageinfo({navigation, route}) {
       },
       headerTintColor: 'black',
     });
-  }, []);
+
+    // fetchUserInfo 함수를 정의
+    const fetchUserInfo = () => {
+      const url = `http://10.50.233.136:3000/userInfo?email=${encodeURIComponent(email)}`;
+
+      axios
+        .get(url)
+        .then((response) => {
+          const data = response.data;
+          setUserInfo({
+            nickname: data.nickname,
+            email: data.email,
+            height: data.height,
+            weight: data.weight,
+            age: data.age,
+          });
+        })
+        .catch((error) => {
+          console.error('사용자 정보를 가져오는 동안 에러가 발생했습니다:', error);
+        });
+    };
+
+    // useEffect 내부에서 fetchUserInfo를 호출하여 사용자 정보를 가져옴
+    fetchUserInfo();
+  }, [email]);
 
   return (
     <ScrollView style={styles.container}>
@@ -20,14 +58,15 @@ export default function Mypageinfo({navigation, route}) {
           <Ionicons name="person" size={24} color="black" />
           <Text style={styles.info}>내 정보 관리</Text>
         </View>
+
         <View style={styles.nameemailContent}>
           <View style={styles.nameContent}>
             <Text style={styles.name1}>이름</Text>
-            <Text style={styles.name2}>홍길동</Text>
+            <Text style={styles.name2}>{nickname}</Text>
           </View>
           <View style={styles.emailContent}>
             <Text style={styles.email1}>이메일</Text>
-            <Text style={styles.email2}>hong@abc.com</Text>
+            <Text style={styles.email2}>{email}</Text>
           </View>
         </View>
       </View>
@@ -48,7 +87,6 @@ const styles = StyleSheet.create({
   nameemailContent: {
     top: 50,
     flexDirection: 'row',
-    justifyContent: 'space-between', // 좌우 배치
   },
   nameContent: {
     flex: 1,

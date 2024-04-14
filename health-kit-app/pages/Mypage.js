@@ -28,7 +28,7 @@ export default function Mypage({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://10.50.231.252:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://10.50.233.136:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -54,8 +54,11 @@ export default function Mypage({navigation, route}) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.myinformationContent}>
-        <TouchableOpacity onPress={() => navigation.navigate('MypageInsertPage', {email: email})}>
-          <Text style={styles.name}>{nickname} 님</Text>
+        <TouchableOpacity
+          style={styles.nameicon}
+          onPress={() => navigation.navigate('MypageinfoPage', {email: email})}
+        >
+          <Text style={styles.name}>{nickname} 님 </Text>
           <Ionicons name="arrow-forward" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.email}>{email}</Text>
@@ -64,9 +67,12 @@ export default function Mypage({navigation, route}) {
       <View style={styles.diseaseContent}>
         <Ionicons name="heart" size={28} color="black" />
         <Text style={styles.info}>나의 건강 정보</Text>
-        <View style={styles.insert}>
+        <TouchableOpacity
+          style={styles.insert}
+          onPress={() => navigation.navigate('MypagehealthPage', {email: email})}
+        >
           <Ionicons name="pencil" size={28} color="black" />
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.health}>
         <View style={styles.statusContainer}>
@@ -106,8 +112,10 @@ const styles = StyleSheet.create({
   myinformationContent: {
     position: 'absolute',
     top: 5,
-    left: 5,
     padding: 20,
+  },
+  nameicon: {
+    flexDirection: 'row',
   },
   name: {
     fontSize: 24,
@@ -121,17 +129,19 @@ const styles = StyleSheet.create({
   },
   horizontalLine1: {
     position: 'absolute',
-    top: 120, // 이메일 텍스트 아래에 위치하도록 설정
+    top: 110, // 이메일 텍스트 아래에 위치하도록 설정
     borderBottomColor: 'lightgray',
     borderBottomWidth: 1,
-    width: '100%',
+    width: '95%',
+    alignSelf: 'center',
   },
   horizontalLine2: {
     position: 'absolute',
     top: 500, // 이메일 텍스트 아래에 위치하도록 설정
     borderBottomColor: 'lightgray',
     borderBottomWidth: 1,
-    width: '100%',
+    width: '95%',
+    alignSelf: 'center',
   },
   diseaseContent: {
     position: 'absolute',
@@ -141,7 +151,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   info: {
-    fontSize: 28,
+    fontSize: 26,
     marginLeft: 8,
     fontWeight: 'bold',
   },
