@@ -32,7 +32,7 @@ export default function Signin({navigation, route}) {
       password: password,
     };
     axios
-      .post('http://10.50.233.136:3000/signIn', loginData)
+      .post('http://10.50.231.252:3000/signIn', loginData)
       .then((res) => {
         if (email === '' || password === '') {
           Alert.alert('입력 오류', '모든 정보를 입력해주세요.', [{text: '확인'}]);

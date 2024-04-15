@@ -3,19 +3,16 @@ import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native
 import {Ionicons} from '@expo/vector-icons';
 import axios from 'axios';
 
-export default function MypageInsert({navigation, route}) {
+export default function Mypageinfo({navigation, route}) {
   const {email} = route.params;
   // 사용자 정보를 관리하는 상태를 추가
   const [userInfo, setUserInfo] = useState({
     nickname: '',
     email: '',
-    height: 0,
-    weight: 0,
-    age: 0,
   });
 
   // userInfo에서 각 필드를 추출
-  const {nickname, height, weight, age} = userInfo;
+  const {nickname} = userInfo;
 
   useEffect(() => {
     navigation.setOptions({
@@ -28,8 +25,8 @@ export default function MypageInsert({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://10.50.233.136:3000/userInfo?email=${encodeURIComponent(email)}`;
-
+      const url = `http://10.50.231.252:3000/userInfo?email=${encodeURIComponent(email)}`;
+      
       axios
         .get(url)
         .then((response) => {

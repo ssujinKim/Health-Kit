@@ -6,6 +6,11 @@ CREATE TABLE users (
     age INT NOT NULL,
     height INT NOT NULL,
     weight INT NOT NULL,
-    gender VARCHAR(15) NOT NULL
+    gender VARCHAR(15) NOT NULL,
+    disease1 VARCHAR(15),
+    disease2 VARCHAR(15),
+    disease3 VARCHAR(15),
+    medicine1 VARCHAR(25),
+    medicine2 VARCHAR(25),
+    medicine3 VARCHAR(25)
 );
-
