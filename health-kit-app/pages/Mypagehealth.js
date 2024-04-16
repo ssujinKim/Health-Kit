@@ -1,8 +1,25 @@
 import React, {useEffect, useState} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, TextInput, ScrollView} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, TextInput, ScrollView, Alert} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import axios from 'axios';
 
 export default function Health({navigation, route}) {
+  const {email} = route.params;
+
+  const [userInfo, setUserInfo] = useState({
+    email: '',
+    height: 0,
+    weight: 0,
+    age: 0,
+    gender: '',
+    disease1: '',
+    disease2: '',
+    disease3: '',
+  });
+
+  // userInfo에서 각 필드를 추출
+  const {height, weight, age, gender, disease1, disease2, disease3} = userInfo;
+
   useEffect(() => {
     navigation.setOptions({
       title: '건강 정보 수정',
@@ -12,24 +29,75 @@ export default function Health({navigation, route}) {
       },
       headerTintColor: 'black',
     });
-  }, []);
+
+    const fetchUserInfo = () => {
+      const url = `http://10.50.231.252:3000/userInfo?email=${encodeURIComponent(email)}`;
+
+      axios
+        .get(url)
+        .then((response) => {
+          const data = response.data;
+          setUserInfo({
+            nickname: data.nickname,
+            email: data.email,
+            height: data.height,
+            weight: data.weight,
+            age: data.age,
+            gender: data.gender,
+            disease1: data.disease1,
+            disease2: data.disease2,
+            disease3: data.disease3,
+          });
+        })
+        .catch((error) => {
+          console.error('사용자 정보를 가져오는 동안 에러가 발생했습니다:', error);
+        });
+    };
+
+    const fetchDiseaseInfo = async () => {
+      try {
+        const response = await axios.get('http://10.50.231.252:3000/disease');
+        // 서버로부터 받은 질병 정보를 상태에 저장
+        const diseaseItems = response.data.map(disease => ({
+          label: disease.disease_name, value: disease.disease_name
+        }));
+        setDisease(diseaseItems);
+      } catch (error) {
+        console.error('질병 정보를 가져오는 동안 에러가 발생했습니다:', error);
+      }
+    };
+    
+    fetchDiseaseInfo();
+    fetchUserInfo();
+
+    setValueDisease1(disease1);
+    setValueDisease2(disease2);
+    setValueDisease3(disease3);
+  }, [email]);
+
+  const handleComplete = async () => {
+    try {
+      const updatedUserInfo = { ...userInfo, 
+      disease1: valueDisease1 || userInfo.disease1, // 선택한 값이 없으면 이전 값으로 유지
+      disease2: valueDisease2 || userInfo.disease2,
+      disease3: valueDisease3 || userInfo.disease3, };
+      await axios.post('http://10.50.231.252:3000/updateUserInfo', updatedUserInfo);
+      console.log('건강 정보가 성공적으로 업데이트되었습니다.');
+      Alert.alert('완료', '건강 정보가 성공적으로 업데이트되었습니다.', [
+        {text: '확인', onPress: () => navigation.navigate('Mypage', {email: email})},
+      ]);
+    } catch (error) {
+      console.error('건강 정보를 업데이트하는 동안 에러가 발생했습니다:', error);
+    }
+  };
+
   const [openDisease1, setOpenDisease1] = useState(false);
   const [valueDisease1, setValueDisease1] = useState(null);
   const [openDisease2, setOpenDisease2] = useState(false);
   const [valueDisease2, setValueDisease2] = useState(null);
   const [openDisease3, setOpenDisease3] = useState(false);
   const [valueDisease3, setValueDisease3] = useState(null);
-  const [disease1, setDisease1] = useState([
-    {label: '당뇨', value: '1'},
-    {label: '고지혈증', value: '2'},
-    {label: '고혈압', value: '3'},
-    {label: '배불러', value: '4'},
-    {label: '배고파', value: '5'},
-    {label: '고지혈증', value: '6'},
-    {label: '고혈압', value: '7'},
-    {label: '배불러', value: '8'},
-    {label: '배고파', value: '9'},
-  ]);
+  const [disease, setDisease] = useState([]);
 
   const [openMedicine1, setOpenMedicine1] = useState(false);
   const [valueMedicine1, setValueMedicine1] = useState(null);
@@ -96,8 +164,6 @@ export default function Health({navigation, route}) {
     setOpenMedicine2(false);
   };
 
-  const [gender, setGender] = useState('');
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={[styles.scrollViewContent, {paddingBottom: 1200}]}>
@@ -106,20 +172,23 @@ export default function Health({navigation, route}) {
           <View style={styles.form}>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>나이</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" />
+              <TextInput style={styles.input} underlineColorAndroid="transparent" 
+              onChangeText={(newAge) => setUserInfo({...userInfo, age: newAge})} placeholder={`${age}`} />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>키(cm)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" />
+              <TextInput style={styles.input} underlineColorAndroid="transparent" 
+              onChangeText={(newHeight) => setUserInfo({...userInfo, height: newHeight})} placeholder={`${height}`} />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>몸무게(kg)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" />
+              <TextInput style={styles.input} underlineColorAndroid="transparent" 
+              onChangeText={(newWeight) => setUserInfo({...userInfo, weight: newWeight})} placeholder={`${weight}`} />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>성별</Text>
               <TouchableOpacity
-                onPress={() => setGender('male')}
+                //onPress={() => setGender('male')}
                 style={[styles.radioButton, gender === 'male' && styles.selectedRadioButton]}
               >
                 <View style={styles.radioButtonCircle}>
@@ -128,7 +197,7 @@ export default function Health({navigation, route}) {
                 <Text style={styles.radioButtonText}>남자</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setGender('female')}
+                //onPress={() => setGender('female')}
                 style={[styles.radioButton, gender === 'female' && styles.selectedRadioButton]}
               >
                 <View style={styles.radioButtonCircle}>
@@ -148,8 +217,8 @@ export default function Health({navigation, route}) {
                 containerStyle={styles.dropdownContainer}
                 style={styles.dropdown}
                 open={openDisease1}
-                value={valueDisease1}
-                items={disease1}
+                value={valueDisease1 || disease1}
+                items={disease}
                 setOpen={handleOpenDisease1}
                 setValue={setValueDisease1}
                 placeholder=""
@@ -166,8 +235,8 @@ export default function Health({navigation, route}) {
                 containerStyle={styles.dropdownContainer}
                 style={styles.dropdown}
                 open={openDisease2}
-                value={valueDisease2}
-                items={disease1}
+                value={valueDisease2 || disease2}
+                items={disease}
                 setOpen={handleOpenDisease2}
                 setValue={setValueDisease2}
                 placeholder=""
@@ -184,8 +253,8 @@ export default function Health({navigation, route}) {
                 containerStyle={styles.dropdownContainer}
                 style={styles.dropdown}
                 open={openDisease3}
-                value={valueDisease3}
-                items={disease1}
+                value={valueDisease3 || disease3}
+                items={disease}
                 setOpen={handleOpenDisease3}
                 setValue={setValueDisease3}
                 placeholder=""
@@ -260,7 +329,7 @@ export default function Health({navigation, route}) {
       </ScrollView>
 
       <View style={styles.continue}>
-        <TouchableOpacity style={styles.continueButton}>
+        <TouchableOpacity style={styles.continueButton} onPress={handleComplete}>
           <Text style={styles.continuebuttonText}>완료하기</Text>
         </TouchableOpacity>
       </View>

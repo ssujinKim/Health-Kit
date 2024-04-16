@@ -94,7 +94,7 @@ app.get('/userInfo', async (req, res) => {
     }
 
     try {
-        const [results] = await db.query("SELECT nickname, email, height, weight, age FROM users WHERE email = ?", [email]);
+        const [results] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
         if (results.length > 0) {
             res.json(results[0]);
         } else {
@@ -106,7 +106,40 @@ app.get('/userInfo', async (req, res) => {
     }
 });
 
+app.get('/disease', async (req, res) => {
+    try {
+        const [results] = await db.query("SELECT disease_name FROM disease");
+        res.json(results); // 질병 정보를 JSON 형태로 클라이언트에 전송
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("서버 오류가 발생했습니다.");
+    }
+});
 
+app.get('/medicine', async (req, res) => {
+    try {
+        const [results] = await db.query("SELECT medicine_name FROM medicine");
+        res.json(results); // 질병 정보를 JSON 형태로 클라이언트에 전송
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("서버 오류가 발생했습니다.");
+    }
+});
+
+app.post('/updateUserInfo', async (req, res) => {
+    const updatedInfo = req.body;
+
+    try {
+      await db.query('UPDATE USERS SET height = ?, weight = ?, age = ?, gender = ?, disease1 = ?, disease2 = ?, disease3 = ? WHERE email = ?', 
+        [updatedInfo.height, updatedInfo.weight, updatedInfo.age, updatedInfo.gender, updatedInfo.disease1, updatedInfo.disease2, updatedInfo.disease3, updatedInfo.email]);
+      console.log('사용자의 건강 정보가 업데이트되었습니다.');
+      res.send('사용자의 건강 정보가 업데이트되었습니다.');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('서버 에러 발생');
+    }
+});
+  
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
