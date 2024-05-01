@@ -10,6 +10,12 @@ import MainPage from '../pages/Main';
 import Mypage from '../pages/Mypage';
 import MypageinfoPage from '../pages/Mypageinfo';
 import MypagehealthPage from '../pages/Mypagehealth';
+import FoodcheckPage from '../pages/FoodPhoto/Foodcheck';
+import FoodrecommendPage from '../pages/FoodPhoto/Foodrecommend';
+import MenuinputPage from '../pages/PersonalFood/Menuinput';
+import MenusearchPage from '../pages/PersonalFood/Menusearch';
+import MenuaddPage from '../pages/PersonalFood/Menuadd';
+import DietrecommendPage from '../pages/PersonalFood/Dietrecommend';
 
 const Stack = createStackNavigator();
 
@@ -43,6 +49,12 @@ const StackNavigator = () => {
       <Stack.Screen name="Mypage" component={Mypage} />
       <Stack.Screen name="MypageinfoPage" component={MypageinfoPage} />
       <Stack.Screen name="MypagehealthPage" component={MypagehealthPage} />
+      <Stack.Screen name="FoodcheckPage" component={FoodcheckPage} />
+      <Stack.Screen name="FoodrecommendPage" component={FoodrecommendPage} />
+      <Stack.Screen name="MenuinputPage" component={MenuinputPage} />
+      <Stack.Screen name="MenusearchPage" component={MenusearchPage} />
+      <Stack.Screen name="MenuaddPage" component={MenuaddPage} />
+      <Stack.Screen name="DietrecommendPage" component={DietrecommendPage} />
     </Stack.Navigator>
   );
 };

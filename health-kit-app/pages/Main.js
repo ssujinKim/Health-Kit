@@ -20,35 +20,61 @@ export default function Main({navigation, route}) {
         </TouchableOpacity>
       </View>
       <View style={styles.bodyContainer}>
-        <View style={styles.shootBox}>
-          <Text style={styles.textBox}>먹고싶은 상품의 {'\n'}상세정보를 촬영해주세요</Text>
-          <View style={styles.shooticonContainer}>
-            <Ionicons name="camera" size={56} color="#96ba8d" style={styles.shooticon} />
-          </View>
+        <View style={styles.photoBox}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('FoodcheckPage');
+            }}
+          >
+            <View style={styles.shootBox}>
+              <Text style={styles.textBox}>먹고싶은 상품의 {'\n'}상세정보를 촬영해주세요</Text>
+              <View style={styles.shooticonContainer}>
+                <Ionicons name="camera" size={56} color="#96ba8d" style={styles.shooticon} />
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
+
         <View style={styles.BoxContainer}>
-          <View style={styles.menuBox}>
-            <Text style={styles.textBox}>개인 맞춤 식단</Text>
-            <View style={styles.menuiconContainer}>
-              <MaterialCommunityIcons
-                name="food"
-                size={52}
-                color="#9ab7d6"
-                style={styles.menuicon}
-              />
-            </View>
+          <View style={styles.fitBox}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('MenuinputPage');
+              }}
+            >
+              <View style={styles.menuBox}>
+                <Text style={styles.textBox}>개인 맞춤 식단</Text>
+                <View style={styles.menuiconContainer}>
+                  <MaterialCommunityIcons
+                    name="food"
+                    size={52}
+                    color="#9ab7d6"
+                    style={styles.menuicon}
+                  />
+                </View>
+              </View>
+            </TouchableOpacity>
           </View>
-          <View style={styles.adviceBox}>
-            <Text style={styles.textBox}>상담하러 가기</Text>
-            <View style={styles.adviceiconContainer}>
-              <Ionicons name="person" size={48} color="#d6c5de" style={styles.personIcon} />
-              <MaterialCommunityIcons
-                name="chat"
-                size={20}
-                color="#d6c5de"
-                style={styles.bubbleIcon}
-              />
-            </View>
+
+          <View style={styles.masterBox}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('');
+              }}
+            >
+              <View style={styles.adviceBox}>
+                <Text style={styles.textBox}>상담하러 가기</Text>
+                <View style={styles.adviceiconContainer}>
+                  <Ionicons name="person" size={48} color="#d6c5de" style={styles.personIcon} />
+                  <MaterialCommunityIcons
+                    name="chat"
+                    size={20}
+                    color="#d6c5de"
+                    style={styles.bubbleIcon}
+                  />
+                </View>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -85,8 +111,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 120,
   },
-  shootBox: {
+  photoBox: {
     width: '90%',
+  },
+  shootBox: {
     height: 180,
     backgroundColor: 'white',
     marginBottom: 20,
@@ -103,8 +131,10 @@ const styles = StyleSheet.create({
   BoxContainer: {
     flexDirection: 'row',
   },
+  fitBox: {
+    width: '47.5%',
+  },
   menuBox: {
-    width: '42.5%',
     height: 190,
     backgroundColor: 'white',
     marginHorizontal: 10,
@@ -118,8 +148,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 6,
   },
+  masterBox: {
+    width: '47.5%',
+  },
   adviceBox: {
-    width: '42.5%',
     height: 190,
     backgroundColor: 'white',
     marginHorizontal: 10,

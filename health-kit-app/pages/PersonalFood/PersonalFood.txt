@@ -1,0 +1,6 @@
+개인 맞춤 식단 파트입니다
+
+Menuinput => 하루 식단 입력
+Menusearch => 식단 검색
+Menuadd => 직접 추가
+Dietrecommend => 식단 추천 받기

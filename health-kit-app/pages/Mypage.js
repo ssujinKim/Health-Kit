@@ -14,7 +14,7 @@ export default function Mypage({navigation, route}) {
     age: 0,
     disease1: '',
     disease2: '',
-    disease3: ''
+    disease3: '',
   });
 
   // userInfo에서 각 필드를 추출
@@ -31,7 +31,7 @@ export default function Mypage({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://10.50.231.252:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://192.168.35.243:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -95,11 +95,13 @@ export default function Mypage({navigation, route}) {
         </View>
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>질병</Text>
-          <Text style={styles.statusOutput}>{disease1} {disease2} {disease3}</Text>
+          <Text style={styles.statusOutput}>
+            {disease1} {disease2} {disease3}
+          </Text>
         </View>
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>복용중인 약</Text>
-          <Text style={styles.statusOutput}>뽀또맛 사탕</Text>
+          <Text style={styles.statusOutput}>사이클로스포린</Text>
         </View>
       </View>
       <View style={styles.horizontalLine2} />
