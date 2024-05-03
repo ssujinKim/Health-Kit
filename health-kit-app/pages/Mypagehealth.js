@@ -31,7 +31,7 @@ export default function Health({navigation, route}) {
     });
 
     const fetchUserInfo = () => {
-      const url = `http://10.50.231.252:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://192.168.35.243:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -56,17 +56,18 @@ export default function Health({navigation, route}) {
 
     const fetchDiseaseInfo = async () => {
       try {
-        const response = await axios.get('http://10.50.231.252:3000/disease');
+        const response = await axios.get('http://192.168.35.243:3000/disease');
         // 서버로부터 받은 질병 정보를 상태에 저장
-        const diseaseItems = response.data.map(disease => ({
-          label: disease.disease_name, value: disease.disease_name
+        const diseaseItems = response.data.map((disease) => ({
+          label: disease.disease_name,
+          value: disease.disease_name,
         }));
         setDisease(diseaseItems);
       } catch (error) {
         console.error('질병 정보를 가져오는 동안 에러가 발생했습니다:', error);
       }
     };
-    
+
     fetchDiseaseInfo();
     fetchUserInfo();
 
@@ -77,11 +78,13 @@ export default function Health({navigation, route}) {
 
   const handleComplete = async () => {
     try {
-      const updatedUserInfo = { ...userInfo, 
-      disease1: valueDisease1 || userInfo.disease1, // 선택한 값이 없으면 이전 값으로 유지
-      disease2: valueDisease2 || userInfo.disease2,
-      disease3: valueDisease3 || userInfo.disease3, };
-      await axios.post('http://10.50.231.252:3000/updateUserInfo', updatedUserInfo);
+      const updatedUserInfo = {
+        ...userInfo,
+        disease1: valueDisease1 || userInfo.disease1, // 선택한 값이 없으면 이전 값으로 유지
+        disease2: valueDisease2 || userInfo.disease2,
+        disease3: valueDisease3 || userInfo.disease3,
+      };
+      await axios.post('http://192.168.35.243:3000/updateUserInfo', updatedUserInfo);
       console.log('건강 정보가 성공적으로 업데이트되었습니다.');
       Alert.alert('완료', '건강 정보가 성공적으로 업데이트되었습니다.', [
         {text: '확인', onPress: () => navigation.navigate('Mypage', {email: email})},
@@ -172,18 +175,30 @@ export default function Health({navigation, route}) {
           <View style={styles.form}>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>나이</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" 
-              onChangeText={(newAge) => setUserInfo({...userInfo, age: newAge})} placeholder={`${age}`} />
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(newAge) => setUserInfo({...userInfo, age: newAge})}
+                placeholder={`${age}`}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>키(cm)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" 
-              onChangeText={(newHeight) => setUserInfo({...userInfo, height: newHeight})} placeholder={`${height}`} />
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(newHeight) => setUserInfo({...userInfo, height: newHeight})}
+                placeholder={`${height}`}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>몸무게(kg)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" 
-              onChangeText={(newWeight) => setUserInfo({...userInfo, weight: newWeight})} placeholder={`${weight}`} />
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(newWeight) => setUserInfo({...userInfo, weight: newWeight})}
+                placeholder={`${weight}`}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>성별</Text>

@@ -25,8 +25,7 @@ export default function Mypageinfo({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://10.50.231.252:3000/userInfo?email=${encodeURIComponent(email)}`;
-      
+      const url = `http://192.168.35.243:3000/userInfo?email=${encodeURIComponent(email)}`;
       axios
         .get(url)
         .then((response) => {
