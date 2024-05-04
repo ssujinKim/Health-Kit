@@ -51,7 +51,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage');
+            navigation.navigate('MenusearchPage', { mealType: '아침 식사' });
           }}
         >
           <View style={styles.foodBox}>
@@ -62,7 +62,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage');
+            navigation.navigate('MenusearchPage', { mealType: '점심 식사' });
           }}
         >
           <View style={styles.foodBox}>
@@ -73,7 +73,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage');
+            navigation.navigate('MenusearchPage', { mealType: '저녁 식사' });
           }}
         >
           <View style={styles.foodBox}>
@@ -84,7 +84,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage');
+            navigation.navigate('MenusearchPage', { mealType: '간식' });
           }}
         >
           <View style={styles.foodBox}>

@@ -23,7 +23,7 @@ export default function Main({navigation, route}) {
         <View style={styles.photoBox}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('FoodcheckPage');
+              navigation.navigate('FoodCameraPage');
             }}
           >
             <View style={styles.shootBox}>

@@ -11,14 +11,16 @@ import {
 
 export default function Menuadd({navigation, route}) {
   useEffect(() => {
+    const mealType = route.params?.mealType || '기본값';
+    
     navigation.setOptions({
-      title: '아침 식사',
+      title: mealType,
       headerStyle: {
-        backgroundColor: '#fff',
+      backgroundColor: '#fff',
       },
       headerTintColor: 'black',
     });
-  }, []);
+  }, [navigation, route.params]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
