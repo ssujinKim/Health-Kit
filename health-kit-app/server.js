@@ -1,6 +1,8 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
+const multer = require('multer');
+const { spawn } = require('child_process');
 //const bcrypt = require('bcrypt');
 const db = require('./db');
 const app = express();
@@ -14,7 +16,7 @@ app.post("/checkNickname", async (req, res) => { // async 함수를 사용
     console.log("닉네임 중복 확인 요청 받음", req.body);
 
     try {
-        const [result] = await db.query("SELECT * FROM USERS WHERE NICKNAME = ?", [nickname]); // await를 사용하여 비동기 쿼리를 기다립니다.
+        const [result] = await db.query("SELECT * FROM USERS WHERE NICKNAME = ?", [nickname]); // await를 사용하여 비동기 쿼리를 기다림
         if (result.length > 0) {
             console.log("이미 사용 중인 닉네임입니다.");
             res.send({ isAvailable: false, message: "이미 사용 중인 닉네임입니다." });
@@ -119,7 +121,7 @@ app.get('/disease', async (req, res) => {
 app.get('/medicine', async (req, res) => {
     try {
         const [results] = await db.query("SELECT medicine_name FROM medicine");
-        res.json(results); // 질병 정보를 JSON 형태로 클라이언트에 전송
+        res.json(results); // 의약품 정보를 JSON 형태로 클라이언트에 전송
     } catch (error) {
         console.error(error);
         res.status(500).send("서버 오류가 발생했습니다.");
@@ -140,6 +142,36 @@ app.post('/updateUserInfo', async (req, res) => {
     }
 });
   
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './ocr/to/') // 파일이 저장될 경로
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname) // 파일명
+    }
+});
+  
+const upload = multer({ storage: storage });
+  
+app.post('/imageUpload', upload.single('file'), (req, res) => {
+    res.send('파일이 성공적으로 업로드 되었습니다.');
+});
+
+app.get('/run-python', (req, res) => {
+    const pythonProcess = spawn('python', ['./ocr/test_ocr/roi_width.py']);
+    let outputData = '';
+  
+    pythonProcess.stdout.on('data', (data) => {
+      outputData += data.toString();
+    });
+  
+    pythonProcess.on('close', (code) => {
+      console.log(`child process exited with code ${code}`);
+      console.log(outputData);
+      res.send(outputData); // 파이썬 스크립트의 출력을 클라이언트에 전송
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })

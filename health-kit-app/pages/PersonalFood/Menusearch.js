@@ -4,14 +4,16 @@ import {Ionicons} from '@expo/vector-icons';
 
 export default function Menusearch({navigation, route}) {
   useEffect(() => {
+    const mealType = route.params?.mealType || '기본값';
+    
     navigation.setOptions({
-      title: '아침 식사',
+      title: mealType,
       headerStyle: {
-        backgroundColor: '#fff',
+      backgroundColor: '#fff',
       },
       headerTintColor: 'black',
     });
-  }, []);
+  }, [navigation, route.params]);
 
   // 입력 상태 관리
   const [searchText, setSearchText] = useState('');
@@ -40,7 +42,7 @@ export default function Menusearch({navigation, route}) {
         <TouchableOpacity
           style={styles.addContent}
           onPress={() => {
-            navigation.navigate('MenuaddPage');
+            navigation.navigate('MenuaddPage', { mealType: route.params?.mealType || '기본값' });
           }}
         >
           <Text style={{marginLeft: 10, fontSize: 18, fontWeight: 'bold'}}>
