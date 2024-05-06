@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {ScrollView, View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import logo from './../assets/logo.png';
+import UploadMode from './FoodPhoto/UploadMode'
 
 export default function Main({navigation, route}) {
   const {email} = route.params;
+  const [modalVisible, setModalVisible] = useState(false); // 모달 상태 관리
 
   return (
     <ScrollView style={styles.container}>
@@ -23,7 +25,7 @@ export default function Main({navigation, route}) {
         <View style={styles.photoBox}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('FoodCameraPage');
+              setModalVisible(true); // 모달을 표시
             }}
           >
             <View style={styles.shootBox}>
@@ -78,6 +80,11 @@ export default function Main({navigation, route}) {
           </View>
         </View>
       </View>
+      <UploadMode
+      visible={modalVisible}
+      onClose={() => setModalVisible(false)}
+      navigation={navigation}
+      />
     </ScrollView>
   );
 }
