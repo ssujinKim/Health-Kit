@@ -25,7 +25,7 @@ function UploadMode({visible, onClose}) {
 
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [4, 3],
+      //aspect: [4, 3],
       quality: 1,
     });
 
@@ -41,7 +41,7 @@ function UploadMode({visible, onClose}) {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      //aspect: [4, 3],
       quality: 1,
     });
 
@@ -62,7 +62,7 @@ function UploadMode({visible, onClose}) {
     });
 
     try {
-      const response = await axios.post('http://192.168.0.11:3000/imageUpload', formData, {
+      const response = await axios.post('http://172.30.1.60:3000/imageUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
