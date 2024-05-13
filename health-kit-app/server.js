@@ -172,6 +172,26 @@ app.get('/run-python', (req, res) => {
     });
 });
 
+app.post("/searchFood", async (req, res) => {
+    const searchText = req.body.searchText;
+    console.log("음식 검색 요청 받음", req.body);
+
+    try {
+        const query = "SELECT * FROM food WHERE food_name LIKE ?";
+        const values = [`%${searchText}%`];
+        const [result] = await db.query(query, values);
+        
+        if (result.length > 0) {
+            res.send({ success: true, data: result });
+        } else {
+            res.send({ success: false, message: "검색 결과가 없습니다." });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("서버 에러");
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })

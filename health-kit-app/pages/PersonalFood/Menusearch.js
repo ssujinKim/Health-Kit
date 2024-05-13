@@ -1,8 +1,38 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import axios from 'axios';
 
 export default function Menusearch({navigation, route}) {
+  // 입력 상태 및 검색 결과 상태 관리
+  const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  // 검색창 활성화 상태 관리
+  const [isFocused, setIsFocused] = useState(false);
+
+  // 검색 텍스트가 변경될 때마다 실행되는 함수
+  const fetchSearchResults = async (searchText) => {
+    try {
+      const response = await axios.post('http://172.30.1.60:3000/searchFood', { searchText });
+      if (response.data.success) {
+        setSearchResults(response.data.data);
+      } else {
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // searchText 상태가 변경될 때마다 fetchSearchResults 호출
+  useEffect(() => {
+    if (searchText.trim()) {
+      fetchSearchResults(searchText);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchText]);
+
   useEffect(() => {
     const mealType = route.params?.mealType || '기본값';
     
@@ -14,11 +44,6 @@ export default function Menusearch({navigation, route}) {
       headerTintColor: 'black',
     });
   }, [navigation, route.params]);
-
-  // 입력 상태 관리
-  const [searchText, setSearchText] = useState('');
-  // 검색창 활성화 상태 관리
-  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <ScrollView style={styles.container}>
@@ -38,7 +63,15 @@ export default function Menusearch({navigation, route}) {
             onChangeText={setSearchText}
           />
         </View>
-
+        {/* 검색 결과 표시 부분 */}
+        <View style={{ flex: 1 }}>
+          {searchResults.map((food, index) => (
+          <TouchableOpacity key={index} style={{ margin: 10 }} onPress={() => setSearchText(food.food_name)}>
+            <Text style={{ fontSize: 18 }}>{food.food_name}</Text>
+          </TouchableOpacity>
+        ))}
+        </View>
+  
         <TouchableOpacity
           style={styles.addContent}
           onPress={() => {
