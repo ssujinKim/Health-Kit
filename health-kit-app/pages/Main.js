@@ -25,7 +25,7 @@ export default function Main({navigation, route}) {
         <View style={styles.photoBox}>
           <TouchableOpacity
             onPress={() => {
-              setModalVisible(true); // 모달을 표시
+              setModalVisible(true); // 모달을 표시 // email 값 전달
             }}
           >
             <View style={styles.shootBox}>
@@ -41,7 +41,7 @@ export default function Main({navigation, route}) {
           <View style={styles.fitBox}>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('MenuinputPage');
+                navigation.navigate('MenuinputPage', {email: email});
               }}
             >
               <View style={styles.menuBox}>

@@ -1,8 +1,19 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import axios from 'axios';
 
 export default function Menuinput({navigation, route}) {
+  const {email} = route.params;
+  const [mealInfo, setMealInfo] = useState({
+    carbs: '-',
+    protein: '-',
+    fat: '-',
+    calories: '-',
+  });
+
+  const {carbs, protein, fat, calories} = mealInfo;
+
   useEffect(() => {
     navigation.setOptions({
       title: '하루 식단 입력하기',
@@ -11,7 +22,29 @@ export default function Menuinput({navigation, route}) {
       },
       headerTintColor: 'black',
     });
-  }, []);
+
+    const fetchMealInfo = () => {
+      let todayDate = getFormattedDate().replace(/년 /, '-').replace(/월 /, '-').replace(/일/, '');
+
+      const url = `http://10.50.249.191:3000/mealInfo?email=${encodeURIComponent(email)}&date=${encodeURIComponent(todayDate)}`;
+      axios
+        .get(url)
+        .then((response) => {
+          const data = response.data;
+          setMealInfo({
+            carbs: data.carbs,
+            protein: data.protein,
+            fat: data.fat,
+            calories: data.calories,
+          });
+        })
+        .catch((error) => {
+          console.error('식단 정보를 가져오는 동안 에러가 발생했습니다:', error);
+        });
+    };
+
+    fetchMealInfo();
+  }, [email, mealInfo]);
 
   // 오늘 날짜 함수
   const getFormattedDate = () => {
@@ -40,10 +73,10 @@ export default function Menuinput({navigation, route}) {
           <Text style={styles.nutritionText}>총 칼로리</Text>
         </View>
         <View style={styles.nutritionContent}>
-          <Text style={styles.nutritionText}>-</Text>
-          <Text style={styles.nutritionText}>-</Text>
-          <Text style={styles.nutritionText}>-</Text>
-          <Text style={styles.nutritionText}>0 kcal</Text>
+          <Text style={styles.nutritionText}>{carbs}</Text>
+          <Text style={styles.nutritionText}>{protein}</Text>
+          <Text style={styles.nutritionText}>{fat}</Text>
+          <Text style={styles.nutritionText}>{calories} kcal</Text>
         </View>
       </View>
 
@@ -51,7 +84,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage', { mealType: '아침 식사' });
+            navigation.navigate('MenusearchPage', { mealType: '아침 식사', email: email });
           }}
         >
           <View style={styles.foodBox}>
@@ -62,7 +95,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage', { mealType: '점심 식사' });
+            navigation.navigate('MenusearchPage', { mealType: '점심 식사', email: email });
           }}
         >
           <View style={styles.foodBox}>
@@ -73,7 +106,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage', { mealType: '저녁 식사' });
+            navigation.navigate('MenusearchPage', { mealType: '저녁 식사', email: email });
           }}
         >
           <View style={styles.foodBox}>
@@ -84,7 +117,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage', { mealType: '간식' });
+            navigation.navigate('MenusearchPage', { mealType: '간식', email: email });
           }}
         >
           <View style={styles.foodBox}>
