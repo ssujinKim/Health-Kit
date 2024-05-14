@@ -4,6 +4,8 @@ import {Ionicons} from '@expo/vector-icons';
 import axios from 'axios';
 
 export default function Menusearch({navigation, route}) {
+  const {email} = route.params;
+
   // 입력 상태 및 검색 결과 상태 관리
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -13,7 +15,7 @@ export default function Menusearch({navigation, route}) {
   // 검색 텍스트가 변경될 때마다 실행되는 함수
   const fetchSearchResults = async (searchText) => {
     try {
-      const response = await axios.post('http://172.30.1.60:3000/searchFood', { searchText });
+      const response = await axios.post('http://10.50.249.191:3000/searchFood', { searchText });
       if (response.data.success) {
         setSearchResults(response.data.data);
       } else {
@@ -75,7 +77,7 @@ export default function Menusearch({navigation, route}) {
         <TouchableOpacity
           style={styles.addContent}
           onPress={() => {
-            navigation.navigate('MenuaddPage', { mealType: route.params?.mealType || '기본값' });
+            navigation.navigate('MenuaddPage', { mealType: route.params?.mealType || '기본값', email: email });
           }}
         >
           <Text style={{marginLeft: 10, fontSize: 18, fontWeight: 'bold'}}>

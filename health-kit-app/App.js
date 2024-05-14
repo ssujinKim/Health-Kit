@@ -9,6 +9,8 @@ import Nickname from './pages/Signup/Nickname';
 import Password from './pages/Signup/Password';
 import Health from './pages/Signup/Health';
 import Email from './pages/Signup/Email';
+//import { EmailProvider } from './pages/EmailContext';
+//import Signin from './pages/Signin';
 
 const Stack = createStackNavigator();
 

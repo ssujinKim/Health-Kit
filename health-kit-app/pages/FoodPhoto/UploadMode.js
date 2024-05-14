@@ -62,7 +62,7 @@ function UploadMode({visible, onClose}) {
     });
 
     try {
-      const response = await axios.post('http://172.30.1.60:3000/imageUpload', formData, {
+      const response = await axios.post('http://10.50.249.191:3000/imageUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

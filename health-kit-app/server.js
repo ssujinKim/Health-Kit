@@ -192,6 +192,61 @@ app.post("/searchFood", async (req, res) => {
     }
 });
 
+app.post('/menuAdd', async (req, res) => {
+    const menuInfo = req.body;
+
+    try {
+      await db.query('INSERT INTO users_diet (user_email, date, meal_type, food_name, kcal, carbs, protein, fat) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+        [menuInfo.email, menuInfo.date, menuInfo.meal_type, menuInfo.food, menuInfo.calories, menuInfo.carbs, menuInfo.protein, menuInfo.fat]);
+      console.log('사용자의 식단 정보가 업데이트되었습니다.');
+      res.send('식단 정보가 업데이트되었습니다.');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('서버 에러 발생');
+    }
+});
+
+app.get('/mealInfo', async (req, res) => {
+    const { email, date } = req.query;
+
+    if (!email) {
+        return res.status(400).send("이메일 파라미터가 필요합니다.");
+    }
+
+    try {
+        const [results] = await db.query(`
+            SELECT 
+                SUM(carbs) AS totalCarbs, 
+                SUM(protein) AS totalProtein, 
+                SUM(fat) AS totalFat, 
+                SUM(kcal) AS totalCalories 
+            FROM users_diet 
+            WHERE user_email = ? AND date = ?`, 
+            [email, date]
+        );
+        if (results.length > 0) {
+            const totals = results[0];
+            if (totals.totalCarbs !== null) { // 합계가 계산된 경우
+                res.json({
+                    carbs: totals.totalCarbs,
+                    protein: totals.totalProtein,
+                    fat: totals.totalFat,
+                    calories: totals.totalCalories
+                });
+            } else {
+                res.send("해당 날짜에 대한 식단 정보가 없습니다.");
+                console.log("해당 날짜에 대한 식단 정보가 없습니다.");
+            }
+        } else {
+            res.send("해당 이메일의 사용자를 찾을 수 없습니다.");
+            console.log("해당 이메일의 사용자를 찾을 수 없습니다.");
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("서버 오류가 발생했습니다.");
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
