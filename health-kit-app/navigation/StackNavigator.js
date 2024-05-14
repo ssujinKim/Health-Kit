@@ -19,6 +19,7 @@ import MenuinputPage from '../pages/PersonalFood/Menuinput';
 import MenusearchPage from '../pages/PersonalFood/Menusearch';
 import MenuaddPage from '../pages/PersonalFood/Menuadd';
 import DietrecommendPage from '../pages/PersonalFood/Dietrecommend';
+import AdvicePage from '../pages/Advice/Advice';
 
 const Stack = createStackNavigator();
 
@@ -61,6 +62,7 @@ const StackNavigator = () => {
       <Stack.Screen name="MenusearchPage" component={MenusearchPage} />
       <Stack.Screen name="MenuaddPage" component={MenuaddPage} />
       <Stack.Screen name="DietrecommendPage" component={DietrecommendPage} />
+      <Stack.Screen name="AdvicePage" component={AdvicePage} />
     </Stack.Navigator>
   );
 };

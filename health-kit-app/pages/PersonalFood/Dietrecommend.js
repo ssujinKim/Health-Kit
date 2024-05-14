@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
 
 export default function Dietrecommend({navigation, route}) {
   useEffect(() => {
@@ -19,11 +19,14 @@ export default function Dietrecommend({navigation, route}) {
       </Text>
       <View style={styles.foodContainer}>
         <View style={styles.foodBox}>
-          <View style={styles.foodPicture}></View>
+          <Image
+            source={require('./../../assets/foodimages/bibimbap.jpg')}
+            style={{width: 100, height: 100, left: 10, alignSelf: 'center', borderRadius: 10}}
+          />
           <View style={styles.foodMenu}>
-            <Text style={styles.foodText}>김치볶음밥</Text>
+            <Text style={styles.foodText}>비빕밥</Text>
             <View style={styles.horizontalLine} />
-            <Text style={styles.kcalText}>250 kcal</Text>
+            <Text style={styles.kcalText}>650 kcal</Text>
           </View>
         </View>
       </View>
@@ -58,14 +61,6 @@ const styles = StyleSheet.create({
     elevation: 6,
     marginBottom: 20,
   },
-  foodPicture: {
-    width: 100,
-    height: 100,
-    backgroundColor: 'black',
-    left: 10,
-    alignSelf: 'center',
-    borderRadius: 10,
-  },
   foodMenu: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -86,7 +81,7 @@ const styles = StyleSheet.create({
   },
   kcalText: {
     marginTop: 100,
-    marginLeft: 80,
+    marginLeft: 100,
     fontWeight: 'bold',
     fontSize: 12,
   },

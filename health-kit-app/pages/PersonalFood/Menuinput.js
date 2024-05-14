@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
 import axios from 'axios';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Image} from 'react-native';
+import {Ionicons} from '@expo/vector-icons';
+import {Calendar, LocaleConfig} from 'react-native-calendars';
 
 export default function Menuinput({navigation, route}) {
   const {email} = route.params;
@@ -26,7 +27,9 @@ export default function Menuinput({navigation, route}) {
     const fetchMealInfo = () => {
       let todayDate = getFormattedDate().replace(/년 /, '-').replace(/월 /, '-').replace(/일/, '');
 
-      const url = `http://10.50.249.191:3000/mealInfo?email=${encodeURIComponent(email)}&date=${encodeURIComponent(todayDate)}`;
+      const url = `http://192.168.35.243:3000/mealInfo?email=${encodeURIComponent(
+        email
+      )}&date=${encodeURIComponent(todayDate)}`;
       axios
         .get(url)
         .then((response) => {
@@ -56,27 +59,111 @@ export default function Menuinput({navigation, route}) {
     return `${year}년 ${month}월 ${day}일`;
   };
 
+  const [selectedDate, setSelectedDate] = useState('');
+  const [isCalendarVisible, setCalendarVisible] = useState(false);
+
+  // onDayPress 함수 수정
+  const onDayPress = (day) => {
+    const {dateString} = day;
+    const selectedDate = new Date(dateString);
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const dayOfMonth = String(selectedDate.getDate()).padStart(2, '0');
+    setSelectedDate(`${year}년 ${month}월 ${dayOfMonth}일`);
+    setCalendarVisible(false); // 달력 닫기
+  };
+
+  const toggleCalendar = () => {
+    setCalendarVisible(!isCalendarVisible);
+  };
+
+  LocaleConfig.locales['kr'] = {
+    monthNames: [
+      '1월',
+      '2월',
+      '3월',
+      '4월',
+      '5월',
+      '6월',
+      '7월',
+      '8월',
+      '9월',
+      '10월',
+      '11월',
+      '12월',
+    ],
+    monthNamesShort: [
+      '1월',
+      '2월',
+      '3월',
+      '4월',
+      '5월',
+      '6월',
+      '7월',
+      '8월',
+      '9월',
+      '10월',
+      '11월',
+      '12월',
+    ],
+    dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+    dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+  };
+
+  // 현재 로케일을 'kr'로 설정
+  LocaleConfig.defaultLocale = 'kr';
+
+  const [isDetailVisible, setIsDetailVisible] = useState(false);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.dateContainer}>
-        <Ionicons name="calendar" size={20} color="gray" style={styles.icon} />
+        <TouchableOpacity onPress={toggleCalendar}>
+          <View style={styles.calenderContainer}>
+            <Ionicons name="calendar" size={22} color="black" style={styles.icon} />
+          </View>
+        </TouchableOpacity>
         <View style={styles.dateBox}>
-          <Text style={styles.dateFont}>{getFormattedDate()}</Text>
+          <Text style={styles.dateFont}>{selectedDate || getFormattedDate()}</Text>
         </View>
       </View>
+      {isCalendarVisible && (
+        <View style={styles.calendarContainer}>
+          <Calendar
+            onDayPress={onDayPress}
+            markedDates={{[selectedDate]: {selected: true}}}
+            style={styles.calendar}
+            theme={{
+              textDayFontSize: 20,
+              textMonthFontSize: 20,
+              textMonthFontWeight: 'bold',
+              textSectionTitleColor: 'rgba(138, 138, 138, 1)',
+              arrowColor: 'gray',
+            }}
+            hideExtraDays={true}
+            monthFormat={'M월'}
+          />
+        </View>
+      )}
 
       <View style={styles.nutritionContainer}>
         <View style={styles.nutritionContent}>
-          <Text style={styles.nutritionText}>탄수화물</Text>
-          <Text style={styles.nutritionText}>단백질</Text>
-          <Text style={styles.nutritionText}>지방</Text>
-          <Text style={styles.nutritionText}>총 칼로리</Text>
-        </View>
-        <View style={styles.nutritionContent}>
-          <Text style={styles.nutritionText}>{carbs}</Text>
-          <Text style={styles.nutritionText}>{protein}</Text>
-          <Text style={styles.nutritionText}>{fat}</Text>
-          <Text style={styles.nutritionText}>{calories} kcal</Text>
+          <View style={{alignItems: 'flex-start'}}>
+            <Text style={styles.nutritionText}>탄수화물</Text>
+            <Text style={styles.nutritionText}>{carbs}</Text>
+          </View>
+          <View style={{alignItems: 'flex-start'}}>
+            <Text style={styles.nutritionText}>단백질</Text>
+            <Text style={styles.nutritionText}>{protein}</Text>
+          </View>
+          <View style={{alignItems: 'flex-start'}}>
+            <Text style={styles.nutritionText}>지방</Text>
+            <Text style={styles.nutritionText}>{fat}</Text>
+          </View>
+          <View style={{alignItems: 'flex-start'}}>
+            <Text style={styles.nutritionText}>총 칼로리</Text>
+            <Text style={styles.nutritionText}>{calories} kcal</Text>
+          </View>
         </View>
       </View>
 
@@ -84,7 +171,8 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage', { mealType: '아침 식사', email: email });
+            navigation.navigate('MenusearchPage', {mealType: '아침 식사', email: email});
+            // 필요한 액션 추가
           }}
         >
           <View style={styles.foodBox}>
@@ -92,10 +180,48 @@ export default function Menuinput({navigation, route}) {
             <Ionicons name="add" size={32} color="gray" style={styles.icon} />
           </View>
         </TouchableOpacity>
+        <View
+          style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '83%',
+            alignSelf: 'center',
+            marginBottom: 20,
+          }}
+        >
+          {/* 'isDetailVisible' 상태에 따라 텍스트 변경 */}
+          <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+            {isDetailVisible ? (
+              <View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{fontSize: 16, fontWeight: 'bold'}}>비빔밥</Text>
+                  <Ionicons name={'close'} size={24} color="gray" />
+                </View>
+                <Text style={{fontSize: 12, marginTop: 10}}>
+                  300g, 탄수화물: 50g, 단백질: 20g, 지방: 30g, 400kcal
+                </Text>
+              </View>
+            ) : (
+              '1개 음식'
+            )}
+          </Text>
+          <TouchableOpacity
+            onPress={() => setIsDetailVisible(!isDetailVisible)} // 버튼 클릭 시 'isDetailVisible' 상태 토글
+          >
+            {/* 'isDetailVisible' 상태에 따라 아이콘 변경 */}
+            <Ionicons
+              name={isDetailVisible ? 'chevron-up' : 'chevron-down'}
+              size={24}
+              color="gray"
+            />
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage', { mealType: '점심 식사', email: email });
+            navigation.navigate('MenusearchPage', {mealType: '점심 식사', email: email});
           }}
         >
           <View style={styles.foodBox}>
@@ -106,7 +232,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage', { mealType: '저녁 식사', email: email });
+            navigation.navigate('MenusearchPage', {mealType: '저녁 식사', email: email});
           }}
         >
           <View style={styles.foodBox}>
@@ -117,7 +243,7 @@ export default function Menuinput({navigation, route}) {
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('MenusearchPage', { mealType: '간식', email: email });
+            navigation.navigate('MenusearchPage', {mealType: '간식', email: email});
           }}
         >
           <View style={styles.foodBox}>
@@ -150,45 +276,61 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    top: 20,
+    marginTop: 30,
+    zIndex: 1,
   },
   icon: {
     marginRight: 10,
   },
   dateFont: {
-    top: 1,
     fontSize: 20,
     fontWeight: 'bold',
   },
-  nutritionContainer: {
-    flexGrow: 1,
+  calendarContainer: {
+    position: 'absolute',
+    top: 70,
+    left: 0,
+    right: 0,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 2,
+  },
+  calendar: {
+    paddingBottom: 30,
+    borderWidth: 1,
+    borderColor: '#E9E9E9',
+    borderRadius: 20,
+  },
+  nutritionContainer: {
+    alignItems: 'center',
+    marginTop: 50,
+    zIndex: 1,
   },
   nutritionContent: {
     flexDirection: 'row',
-    top: 80,
-    width: '70%',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    width: '95%',
     marginBottom: 10,
+    justifyContent: 'space-around',
+  },
+  nutritionItem: {
+    alignItems: 'flex-start',
   },
   nutritionText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   foodContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 120,
+    marginTop: 30,
+    zIndex: 1,
   },
   foodBox: {
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
     width: '90%',
-    height: 60,
+    height: 55,
     backgroundColor: 'white',
     marginHorizontal: 10,
     borderRadius: 15,
@@ -203,9 +345,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   foodText: {
-    lineHeight: 70,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginLeft: 20,
+    marginLeft: 16,
+    textAlign: 'center',
   },
 });

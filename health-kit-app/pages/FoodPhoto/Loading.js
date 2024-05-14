@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, ActivityIndicator, StyleSheet} from 'react-native';
 import axios from 'axios';
 
 const LoadingScreen = () => {
@@ -7,7 +7,8 @@ const LoadingScreen = () => {
   const [pythonData, setPythonData] = useState('');
 
   useEffect(() => {
-    axios.get('http://10.50.249.191:3000/run-python')
+    axios
+      .get('http://192.168.35.243:3000/run-python')
       .then((response) => {
         console.log(response.data);
         setPythonData(response.data);

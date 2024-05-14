@@ -35,7 +35,7 @@ export default function Nickname({navigation, route}) {
       return; // 닉네임이 비어있으면 여기서 처리를 멈춥니다.
     }
     axios
-      .post('http://10.50.233.136:3000/checkNickname', {nickname})
+      .post('http://192.168.35.243:3000/checkNickname', {nickname})
       .then((response) => {
         if (response.data.isAvailable) {
           console.log('사용할 수 있는 닉네임입니다.');

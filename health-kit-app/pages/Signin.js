@@ -32,7 +32,7 @@ export default function Signin({navigation, route}) {
       password: password,
     };
     axios
-      .post('http://10.50.249.191:3000/signIn', loginData)
+      .post('http://192.168.35.243:3000/signIn', loginData)
       .then((res) => {
         if (email === '' || password === '') {
           Alert.alert('입력 오류', '모든 정보를 입력해주세요.', [{text: '확인'}]);
@@ -143,13 +143,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     padding: 10,
     borderRadius: 5,
-    height: 50,
+    height: 55,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonText: {
     color: 'white',
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: '600',
   },
   buttonRow: {
