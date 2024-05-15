@@ -35,7 +35,7 @@ export default function Email({navigation, route}) {
       return; // 이메일이 비어있으면 여기서 처리를 멈춥니다.
     }
     axios
-      .post('http://10.50.233.136:3000/checkEmail', {email})
+      .post('http://192.168.35.243:3000/checkEmail', {email})
       .then((response) => {
         if (response.data.isAvailable) {
           console.log(response.data.message);

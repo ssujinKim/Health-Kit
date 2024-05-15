@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {ScrollView, View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import logo from './../assets/logo.png';
-import UploadMode from './FoodPhoto/UploadMode'
+import UploadMode from './FoodPhoto/UploadMode';
 
 export default function Main({navigation, route}) {
   const {email} = route.params;
@@ -61,7 +61,7 @@ export default function Main({navigation, route}) {
           <View style={styles.masterBox}>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('');
+                navigation.navigate('AdvicePage');
               }}
             >
               <View style={styles.adviceBox}>
@@ -81,9 +81,9 @@ export default function Main({navigation, route}) {
         </View>
       </View>
       <UploadMode
-      visible={modalVisible}
-      onClose={() => setModalVisible(false)}
-      navigation={navigation}
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        navigation={navigation}
       />
     </ScrollView>
   );
@@ -137,12 +137,13 @@ const styles = StyleSheet.create({
   },
   BoxContainer: {
     flexDirection: 'row',
+    paddingBottom: 20,
   },
   fitBox: {
     width: '47.5%',
   },
   menuBox: {
-    height: 190,
+    height: 195,
     backgroundColor: 'white',
     marginHorizontal: 10,
     borderRadius: 15,
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     width: '47.5%',
   },
   adviceBox: {
-    height: 190,
+    height: 195,
     backgroundColor: 'white',
     marginHorizontal: 10,
     borderRadius: 15,

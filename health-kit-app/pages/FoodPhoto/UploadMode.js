@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { StyleSheet, Modal, View, Pressable, Text, Alert } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { useNavigation } from '@react-navigation/native';
+import React, {useState} from 'react';
+import {StyleSheet, Modal, View, Pressable, Text, Alert} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useNavigation} from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
@@ -10,7 +10,7 @@ function UploadMode({visible, onClose}) {
   const [image, setImage] = useState(null);
 
   const requestCameraPermission = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    const {status} = await ImagePicker.requestCameraPermissionsAsync();
 
     if (status !== 'granted') {
       Alert.alert('Sorry, we need camera permissions to make this work!');
@@ -62,40 +62,38 @@ function UploadMode({visible, onClose}) {
     });
 
     try {
-      const response = await axios.post('http://10.50.249.191:3000/imageUpload', formData, {
+      const response = await axios.post('http://192.168.35.243:3000/imageUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      console.log("성공");
+      console.log('성공');
       console.log(response.data);
       navigation.navigate('LoadingPage');
     } catch (error) {
-      console.log("실패");
+      console.log('실패');
       console.log(error);
     }
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose} >
+    <Modal visible={visible} transparent={true} animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.background} onPress={onClose}>
         <View style={styles.whiteBox}>
           <Pressable
             style={styles.actionButton}
-            android_ripple={{color: "#eee"}}
-            onPress={takeAndCropPhoto} >
+            android_ripple={{color: '#eee'}}
+            onPress={takeAndCropPhoto}
+          >
             <Icon name="camera-alt" color="#757575" size={24} style={styles.icon} />
             <Text style={styles.actionText}>카메라로 촬영하기</Text>
           </Pressable>
           <Pressable
             style={styles.actionButton}
-            android_ripple={{color: "#eee"}}
-            onPress={selectPhoto} >
+            android_ripple={{color: '#eee'}}
+            onPress={selectPhoto}
+          >
             <Icon name="photo" color="#757575" size={24} style={styles.icon} />
             <Text style={styles.actionText}>사진 선택하기</Text>
           </Pressable>
@@ -107,21 +105,21 @@ function UploadMode({visible, onClose}) {
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: 'rgba(0,0,0,0.6)',
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   whiteBox: {
     width: 300,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 4,
     elevation: 2,
   },
   actionButton: {
     padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   icon: {
     marginRight: 8,

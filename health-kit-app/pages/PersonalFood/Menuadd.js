@@ -7,7 +7,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert
+  Alert,
 } from 'react-native';
 import axios from 'axios';
 
@@ -23,7 +23,7 @@ export default function Menuadd({navigation, route}) {
     navigation.setOptions({
       title: mealType,
       headerStyle: {
-      backgroundColor: '#fff',
+        backgroundColor: '#fff',
       },
       headerTintColor: 'black',
     });
@@ -43,7 +43,7 @@ export default function Menuadd({navigation, route}) {
     try {
       console.log(route.params);
       const todayDate = getFormattedDate(); // 오늘 날짜를 구함
-      const response = await axios.post('http://10.50.249.191:3000/menuAdd', {
+      const response = await axios.post('http://192.168.35.243:3000/menuAdd', {
         email: email,
         food: food,
         carbs: carbs,
@@ -51,11 +51,11 @@ export default function Menuadd({navigation, route}) {
         fat: fat,
         calories: calories,
         date: todayDate,
-        meal_type: mealType
+        meal_type: mealType,
       });
       console.log(response.data);
       Alert.alert('성공', '식단 정보가 업데이트되었습니다.', [{text: '확인'}]);
-      navigation.navigate('MenuinputPage', { email: email });
+      navigation.navigate('MenuinputPage', {email: email});
     } catch (error) {
       console.error(error);
       Alert.alert('실패', '데이터 저장 중 오류가 발생했습니다.', [{text: '확인'}]);
@@ -69,23 +69,43 @@ export default function Menuadd({navigation, route}) {
           <View style={styles.form}>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>음식</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" onChangeText={(text) => setFood(text)}/>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(text) => setFood(text)}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>탄수화물(g)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" onChangeText={(text) => setCarbs(text)}/>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(text) => setCarbs(text)}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>단백질(g)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" onChangeText={(text) => setProtein(text)}/>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(text) => setProtein(text)}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>지방(g)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" onChangeText={(text) => setFat(text)}/>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(text) => setFat(text)}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>칼로리(kcal)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" onChangeText={(text) => setCalories(text)}/>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(text) => setCalories(text)}
+              />
             </View>
           </View>
         </View>
