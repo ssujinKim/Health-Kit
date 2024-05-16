@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, TextInput, ScrollView, Alert} from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {Ionicons} from '@expo/vector-icons';
 import axios from 'axios';
 
-export default function Health({navigation, route}) {
-  const {email} = route.params;
+export default function Health({ navigation, route }) {
+  const { email } = route.params;
 
   const [userInfo, setUserInfo] = useState({
     email: '',
@@ -12,26 +12,81 @@ export default function Health({navigation, route}) {
     weight: 0,
     age: 0,
     gender: '',
-    disease1: '',
-    disease2: '',
-    disease3: '',
+    diseases: ['', '', ''],
+    medicine: ['', '', '']
   });
 
   // userInfo에서 각 필드를 추출
-  const {height, weight, age, gender, disease1, disease2, disease3} = userInfo;
+  const {height, weight, age, gender} = userInfo;
+
+  // 질병
+  const [dSearchTexts, dSetSearchTexts] = useState(['', '', '']);
+  const [dSearchResults, dSetSearchResults] = useState([[], [], []]);
+  const [dIsFocused, dSetIsFocused] = useState([false, false, false]);
+
+  const fetchSearchDisease = async (searchText, index) => {
+    try {
+      const response = await axios.post('http://10.50.249.191:3000/searchDisease', { searchText });
+      if (response.data.success) {
+        dSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? response.data.data : result));
+      } else {
+        dSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? [] : result));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    dSearchTexts.forEach((searchText, index) => {
+      if (searchText && searchText.trim()) {
+        fetchSearchDisease(searchText, index);
+      } else {
+        dSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? [] : result));
+      }
+    });
+  }, [dSearchTexts]);
+
+  // 의약품
+  const [mSearchTexts, mSetSearchTexts] = useState(['', '', '']);
+  const [mSearchResults, mSetSearchResults] = useState([[], [], []]);
+  const [mIsFocused, mSetIsFocused] = useState([false, false, false]);
+
+  const fetchSearchMedicine = async (searchText, index) => {
+    try {
+      const response = await axios.post('http://192.168.0.8:3000/searchMedicine', { searchText });
+      if (response.data.success) {
+        mSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? response.data.data : result));
+      } else {
+        mSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? [] : result));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    mSearchTexts.forEach((searchText, index) => {
+      if (searchText && searchText.trim()) {
+        fetchSearchMedicine(searchText, index);
+      } else {
+        mSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? [] : result));
+      }
+    });
+  }, [mSearchTexts]);
 
   useEffect(() => {
     navigation.setOptions({
       title: '건강 정보 수정',
       headerStyle: {
         backgroundColor: '#fff',
-        // shadowColor: '#1F266A',
       },
       headerTintColor: 'black',
     });
 
+    // 사용자 정보 불러오기
     const fetchUserInfo = () => {
-      const url = `http://192.168.35.243:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://10.50.249.191:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -44,132 +99,109 @@ export default function Health({navigation, route}) {
             weight: data.weight,
             age: data.age,
             gender: data.gender,
-            disease1: data.disease1,
-            disease2: data.disease2,
-            disease3: data.disease3,
+            diseases: [data.disease1, data.disease2, data.disease3],
+            medicines: [data.medicine1, data.medicine2, data.medicine3]
           });
+
+          // 사용자 정보가 성공적으로 가져와진 후 정보를 검색창에 미리 띄워줌
+          dSetSearchTexts([data.disease1, data.disease2, data.disease3]);
+          mSetSearchTexts([data.medicine1, data.medicine2, data.medicine3]);
         })
         .catch((error) => {
           console.error('사용자 정보를 가져오는 동안 에러가 발생했습니다:', error);
         });
     };
 
-    const fetchDiseaseInfo = async () => {
-      try {
-        const response = await axios.get('http://192.168.35.243:3000/disease');
-        // 서버로부터 받은 질병 정보를 상태에 저장
-        const diseaseItems = response.data.map((disease) => ({
-          label: disease.disease_name,
-          value: disease.disease_name,
-        }));
-        setDisease(diseaseItems);
-      } catch (error) {
-        console.error('질병 정보를 가져오는 동안 에러가 발생했습니다:', error);
-      }
-    };
-
-    fetchDiseaseInfo();
     fetchUserInfo();
+  }, [email, navigation]);
 
-    setValueDisease1(disease1);
-    setValueDisease2(disease2);
-    setValueDisease3(disease3);
-  }, [email]);
-
+  // 사용자 정보 전송
   const handleComplete = async () => {
     try {
       const updatedUserInfo = {
         ...userInfo,
-        disease1: valueDisease1 || userInfo.disease1, // 선택한 값이 없으면 이전 값으로 유지
-        disease2: valueDisease2 || userInfo.disease2,
-        disease3: valueDisease3 || userInfo.disease3,
+        disease1: dSearchTexts[0],
+        disease2: dSearchTexts[1],
+        disease3: dSearchTexts[2],
+        medicine1: mSearchTexts[0],
+        medicine2: mSearchTexts[1],
+        medicine3: mSearchTexts[2],
       };
-      await axios.post('http://192.168.35.243:3000/updateUserInfo', updatedUserInfo);
+      console.log(mSearchTexts[0]);
+      await axios.post('http://10.50.249.191:3000/updateUserInfo', updatedUserInfo);
       console.log('건강 정보가 성공적으로 업데이트되었습니다.');
       Alert.alert('완료', '건강 정보가 성공적으로 업데이트되었습니다.', [
-        {text: '확인', onPress: () => navigation.navigate('Mypage', {email: email})},
+        { text: '확인', onPress: () => navigation.navigate('Mypage', { email: email }) },
       ]);
     } catch (error) {
       console.error('건강 정보를 업데이트하는 동안 에러가 발생했습니다:', error);
     }
   };
 
-  const [openDisease1, setOpenDisease1] = useState(false);
-  const [valueDisease1, setValueDisease1] = useState(null);
-  const [openDisease2, setOpenDisease2] = useState(false);
-  const [valueDisease2, setValueDisease2] = useState(null);
-  const [openDisease3, setOpenDisease3] = useState(false);
-  const [valueDisease3, setValueDisease3] = useState(null);
-  const [disease, setDisease] = useState([]);
+  // 검색창 및 검색 결과를 렌더링하는 컴포넌트를 동적으로 생성하기 위한 함수
+  // 질병
+  const dRenderSearchBox = (index) => (
+    <View>
+      <View style={styles.searchBox}>
+        <Ionicons name="search" size={28} color="gray" style={{ marginLeft: 15 }} />
+        <TextInput
+          style={{
+            marginLeft: 10,
+            fontSize: 22,
+            color: dSearchTexts[index] ? 'black' : 'lightgray',
+            flex: 1,
+          }}
+          placeholder="질병 검색하기"
+          placeholderTextColor="lightgray"
+          value={dSearchTexts[index]}
+          onChangeText={(text) => dSetSearchTexts(prevTexts => prevTexts.map((t, idx) => idx === index ? text : t))}
+          onFocus={() => dSetIsFocused(prevFocused => prevFocused.map((f, idx) => idx === index ? true : f))}
+        />
+      </View>
+      {dIsFocused[index] && dSearchResults[index].map((disease, idx) => (
+        <TouchableOpacity key={idx} style={{ margin: 10 }} onPress={() => {
+          dSetSearchTexts(prevTexts => prevTexts.map((t, i) => i === index ? disease.disease_name : t));
+          dSetIsFocused(prevFocused => prevFocused.map((f, i) => i === index ? false : f));
+        }}>
+          <Text style={{ fontSize: 18 }}>{disease.disease_name}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
 
-  const [openMedicine1, setOpenMedicine1] = useState(false);
-  const [valueMedicine1, setValueMedicine1] = useState(null);
-  const [openMedicine2, setOpenMedicine2] = useState(false);
-  const [valueMedicine2, setValueMedicine2] = useState(null);
-  const [openMedicine3, setOpenMedicine3] = useState(false);
-  const [valueMedicine3, setValueMedicine3] = useState(null);
-  const [medicine1, setMedicine1] = useState([
-    {label: '약1', value: '1'},
-    {label: '약2', value: '2'},
-  ]);
-
-  const handleOpenDisease1 = () => {
-    setOpenDisease1(!openDisease1);
-    setOpenDisease2(false);
-    setOpenDisease3(false);
-    setOpenMedicine1(false);
-    setOpenMedicine2(false);
-    setOpenMedicine3(false);
-  };
-
-  const handleOpenDisease2 = () => {
-    setOpenDisease2(!openDisease2);
-    setOpenDisease1(false);
-    setOpenDisease3(false);
-    setOpenMedicine1(false);
-    setOpenMedicine2(false);
-    setOpenMedicine3(false);
-  };
-
-  const handleOpenDisease3 = () => {
-    setOpenDisease3(!openDisease3);
-    setOpenDisease1(false);
-    setOpenDisease2(false);
-    setOpenMedicine1(false);
-    setOpenMedicine2(false);
-    setOpenMedicine3(false);
-  };
-
-  const handleOpenMedicine1 = () => {
-    setOpenMedicine1(!openMedicine1);
-    setOpenDisease1(false);
-    setOpenDisease2(false);
-    setOpenDisease3(false);
-    setOpenMedicine2(false);
-    setOpenMedicine3(false);
-  };
-
-  const handleOpenMedicine2 = () => {
-    setOpenMedicine2(!openMedicine2);
-    setOpenDisease1(false);
-    setOpenDisease2(false);
-    setOpenDisease3(false);
-    setOpenMedicine1(false);
-    setOpenMedicine3(false);
-  };
-
-  const handleOpenMedicine3 = () => {
-    setOpenMedicine3(!openMedicine3);
-    setOpenDisease1(false);
-    setOpenDisease2(false);
-    setOpenDisease3(false);
-    setOpenMedicine1(false);
-    setOpenMedicine2(false);
-  };
+  // 의약품
+  const mRenderSearchBox = (index) => (
+    <View>
+      <View style={styles.searchBox}>
+        <Ionicons name="search" size={28} color="gray" style={{ marginLeft: 15 }} />
+        <TextInput
+          style={{
+            marginLeft: 10,
+            fontSize: 22,
+            color: mSearchTexts[index] ? 'black' : 'lightgray',
+            flex: 1,
+          }}
+          placeholder="의약품 검색하기"
+          placeholderTextColor="lightgray"
+          value={mSearchTexts[index]}
+          onChangeText={(text) => mSetSearchTexts(prevTexts => prevTexts.map((t, idx) => idx === index ? text : t))}
+          onFocus={() => mSetIsFocused(prevFocused => prevFocused.map((f, idx) => idx === index ? true : f))}
+        />
+      </View>
+      {mIsFocused[index] && mSearchResults[index].map((medicine, idx) => (
+        <TouchableOpacity key={idx} style={{ margin: 10 }} onPress={() => {
+          mSetSearchTexts(prevTexts => prevTexts.map((t, i) => i === index ? medicine.medicine_name : t));
+          mSetIsFocused(prevFocused => prevFocused.map((f, i) => i === index ? false : f));
+        }}>
+          <Text style={{ fontSize: 18 }}>{medicine.medicine_name}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={[styles.scrollViewContent, {paddingBottom: 1200}]}>
+      <ScrollView contentContainerStyle={[styles.scrollViewContent, { paddingBottom: 1200 }]}>
         <View style={styles.content}>
           <Text style={styles.contentText}>기본 정보를 수정해주세요</Text>
           <View style={styles.form}>
@@ -180,6 +212,7 @@ export default function Health({navigation, route}) {
                 underlineColorAndroid="transparent"
                 onChangeText={(newAge) => setUserInfo({...userInfo, age: newAge})}
                 placeholder={`${age}`}
+                keyboardType="numeric"
               />
             </View>
             <View style={styles.inputContainer}>
@@ -189,6 +222,7 @@ export default function Health({navigation, route}) {
                 underlineColorAndroid="transparent"
                 onChangeText={(newHeight) => setUserInfo({...userInfo, height: newHeight})}
                 placeholder={`${height}`}
+                keyboardType="numeric"
               />
             </View>
             <View style={styles.inputContainer}>
@@ -198,6 +232,7 @@ export default function Health({navigation, route}) {
                 underlineColorAndroid="transparent"
                 onChangeText={(newWeight) => setUserInfo({...userInfo, weight: newWeight})}
                 placeholder={`${weight}`}
+                keyboardType="numeric"
               />
             </View>
             <View style={styles.inputContainer}>
@@ -226,119 +261,14 @@ export default function Health({navigation, route}) {
             <Text style={[styles.contentText, {marginTop: 40, marginBottom: 20}]}>
               질병을 선택해주세요
             </Text>
-            <View style={[styles.inputContainer, {zIndex: 5}]}>
-              <Text style={styles.textStyle}>1.</Text>
-              <DropDownPicker
-                containerStyle={styles.dropdownContainer}
-                style={styles.dropdown}
-                open={openDisease1}
-                value={valueDisease1 || disease1}
-                items={disease}
-                setOpen={handleOpenDisease1}
-                setValue={setValueDisease1}
-                placeholder=""
-                // listMode="MODAL"
-                modalProps={{
-                  animationType: 'fade',
-                }}
-                // modalTitle="선택해주세요."
-              />
-            </View>
-            <View style={[styles.inputContainer, {zIndex: 4}]}>
-              <Text style={styles.textStyle}>2.</Text>
-              <DropDownPicker
-                containerStyle={styles.dropdownContainer}
-                style={styles.dropdown}
-                open={openDisease2}
-                value={valueDisease2 || disease2}
-                items={disease}
-                setOpen={handleOpenDisease2}
-                setValue={setValueDisease2}
-                placeholder=""
-                // listMode="MODAL"
-                modalProps={{
-                  animationType: 'fade',
-                }}
-                // modalTitle="선택해주세요."
-              />
-            </View>
-            <View style={[styles.inputContainer, {zIndex: 3}]}>
-              <Text style={styles.textStyle}>3.</Text>
-              <DropDownPicker
-                containerStyle={styles.dropdownContainer}
-                style={styles.dropdown}
-                open={openDisease3}
-                value={valueDisease3 || disease3}
-                items={disease}
-                setOpen={handleOpenDisease3}
-                setValue={setValueDisease3}
-                placeholder=""
-                // listMode="MODAL"
-                modalProps={{
-                  animationType: 'fade',
-                }}
-                // modalTitle="선택해주세요."
-              />
-            </View>
+            {dSearchTexts.map((_, index) => dRenderSearchBox(index))}
 
             <View style={styles.horizontalLine2} />
             <Text style={[styles.contentText, {marginTop: 40, marginBottom: 20}]}>
               복용중인 약을 선택해주세요
             </Text>
-            <View style={[styles.inputContainer, {zIndex: 2}]}>
-              <Text style={styles.textStyle}>1.</Text>
-              <DropDownPicker
-                containerStyle={styles.dropdownContainer}
-                style={styles.dropdown}
-                open={openMedicine1}
-                value={valueMedicine1}
-                items={medicine1}
-                setOpen={handleOpenMedicine1}
-                setValue={setValueMedicine1}
-                placeholder=""
-                // listMode="MODAL"
-                modalProps={{
-                  animationType: 'fade',
-                }}
-                // modalTitle="선택해주세요."
-              />
-            </View>
-            <View style={[styles.inputContainer, {zIndex: 1}]}>
-              <Text style={styles.textStyle}>2.</Text>
-              <DropDownPicker
-                containerStyle={styles.dropdownContainer}
-                style={styles.dropdown}
-                open={openMedicine2}
-                value={valueMedicine2}
-                items={medicine1}
-                setOpen={handleOpenMedicine2}
-                setValue={setValueMedicine2}
-                placeholder=""
-                // listMode="MODAL"
-                modalProps={{
-                  animationType: 'fade',
-                }}
-                // modalTitle="선택해주세요."
-              />
-            </View>
-            <View style={[styles.inputContainer]}>
-              <Text style={styles.textStyle}>3.</Text>
-              <DropDownPicker
-                containerStyle={styles.dropdownContainer}
-                style={styles.dropdown}
-                open={openMedicine3}
-                value={valueMedicine3}
-                items={medicine1}
-                setOpen={handleOpenMedicine3}
-                setValue={setValueMedicine3}
-                placeholder=""
-                // listMode="MODAL"
-                modalProps={{
-                  animationType: 'fade',
-                }}
-                // modalTitle="선택해주세요."
-              />
-            </View>
+            {mSearchTexts.map((_, index) => mRenderSearchBox(index))}
+
           </View>
         </View>
       </ScrollView>
@@ -448,5 +378,26 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     width: '95%',
     alignSelf: 'center',
+  },
+  searchContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+  },
+  searchBox: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: '90%',
+    height: 55,
+    backgroundColor: 'white',
+    marginHorizontal: 10,
+    borderRadius: 15,
+    borderColor: 'lightgray',
+    borderWidth: 1,
+  },
+  addContent: {
+    width: '90%',
+    marginTop: 20,
   },
 });

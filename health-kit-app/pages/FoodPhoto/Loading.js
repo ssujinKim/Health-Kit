@@ -7,8 +7,7 @@ const LoadingScreen = () => {
   const [pythonData, setPythonData] = useState('');
 
   useEffect(() => {
-    axios
-      .get('http://192.168.35.243:3000/run-python')
+    axios.get('http://192.168.0.8:3000/run-python-ocr')
       .then((response) => {
         console.log(response.data);
         setPythonData(response.data);

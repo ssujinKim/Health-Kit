@@ -108,23 +108,64 @@ app.get('/userInfo', async (req, res) => {
     }
 });
 
-app.get('/disease', async (req, res) => {
+// app.get('/disease', async (req, res) => {
+//     try {
+//         const [results] = await db.query("SELECT disease_name FROM disease");
+//         res.json(results); // 질병 정보를 JSON 형태로 클라이언트에 전송
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send("서버 오류가 발생했습니다.");
+//     }
+// });
+
+
+// app.get('/medicine', async (req, res) => {
+//     try {
+//         const [results] = await db.query("SELECT medicine_name FROM medicine");
+//         res.json(results); // 의약품 정보를 JSON 형태로 클라이언트에 전송
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send("서버 오류가 발생했습니다.");
+//     }
+// });
+
+app.post("/searchDisease", async (req, res) => {
+    const searchText = req.body.searchText;
+    console.log("질병 검색 요청 받음", req.body);
+
     try {
-        const [results] = await db.query("SELECT disease_name FROM disease");
-        res.json(results); // 질병 정보를 JSON 형태로 클라이언트에 전송
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("서버 오류가 발생했습니다.");
+        const query = "SELECT * FROM disease WHERE disease_name LIKE ?";
+        const values = [`%${searchText}%`];
+        const [result] = await db.query(query, values);
+        
+        if (result.length > 0) {
+            res.send({ success: true, data: result });
+        } else {
+            res.send({ success: false, message: "검색 결과가 없습니다." });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("서버 에러");
     }
 });
 
-app.get('/medicine', async (req, res) => {
+app.post("/searchMedicine", async (req, res) => {
+    const searchText = req.body.searchText;
+    console.log("의약품 검색 요청 받음", req.body);
+
     try {
-        const [results] = await db.query("SELECT medicine_name FROM medicine");
-        res.json(results); // 의약품 정보를 JSON 형태로 클라이언트에 전송
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("서버 오류가 발생했습니다.");
+        const query = "SELECT * FROM medicine WHERE medicine_name LIKE ?";
+        const values = [`%${searchText}%`];
+        const [result] = await db.query(query, values);
+        
+        if (result.length > 0) {
+            res.send({ success: true, data: result });
+        } else {
+            res.send({ success: false, message: "검색 결과가 없습니다." });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("서버 에러");
     }
 });
 
@@ -132,8 +173,8 @@ app.post('/updateUserInfo', async (req, res) => {
     const updatedInfo = req.body;
 
     try {
-      await db.query('UPDATE USERS SET height = ?, weight = ?, age = ?, gender = ?, disease1 = ?, disease2 = ?, disease3 = ? WHERE email = ?', 
-        [updatedInfo.height, updatedInfo.weight, updatedInfo.age, updatedInfo.gender, updatedInfo.disease1, updatedInfo.disease2, updatedInfo.disease3, updatedInfo.email]);
+      await db.query('UPDATE USERS SET height = ?, weight = ?, age = ?, gender = ?, disease1 = ?, disease2 = ?, disease3 = ?, medicine1 = ?, medicine2 = ?, medicine3 = ? WHERE email = ?', 
+        [updatedInfo.height, updatedInfo.weight, updatedInfo.age, updatedInfo.gender, updatedInfo.disease1, updatedInfo.disease2, updatedInfo.disease3,updatedInfo.medicine1, updatedInfo.medicine2, updatedInfo.medicine3, updatedInfo.email]);
       console.log('사용자의 건강 정보가 업데이트되었습니다.');
       res.send('사용자의 건강 정보가 업데이트되었습니다.');
     } catch (err) {
@@ -157,11 +198,12 @@ app.post('/imageUpload', upload.single('file'), (req, res) => {
     res.send('파일이 성공적으로 업로드 되었습니다.');
 });
 
-app.get('/run-python', (req, res) => {
-    const pythonProcess = spawn('python', ['./ocr/test_ocr/roi_width.py']);
+app.get('/run-python-ocr', (req, res) => {
+    const pythonProcess = spawn('C:/Health-Kit/Health-Kit/health-kit-app/myvenv/Scripts/python.exe', ['./model/ocr_recommendations.py']);
     let outputData = '';
   
     pythonProcess.stdout.on('data', (data) => {
+      console.error(`stderr: ${data}`);
       outputData += data.toString();
     });
   
@@ -206,7 +248,33 @@ app.post('/menuAdd', async (req, res) => {
     }
 });
 
-app.get('/mealInfo', async (req, res) => {
+app.post('/menuSearchAdd', async (req, res) => {
+    const menuInfo = req.body;
+
+    try {;
+      // 먼저 foods_info 테이블에서 음식의 영양 정보를 조회
+      const [foodInfo] = await db.query('SELECT * FROM food WHERE food_name = ?', [menuInfo.food]);
+      
+      if (foodInfo.length > 0) {
+        // 조회된 영양 정보를 바탕으로 users_diet 테이블에 데이터를 삽입
+        await db.query('INSERT INTO users_diet (user_email, date, meal_type, food_name, kcal, carbs, ' + 
+        'sugars, fat, trans_fat, saturated_fat, cholesterol, protein, calcium, sodium) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+          [menuInfo.email, menuInfo.date, menuInfo.meal_type, menuInfo.food, foodInfo[0].kcal, foodInfo[0].carbs, 
+          foodInfo[0].sugars, foodInfo[0].fat, foodInfo[0].trans_fat, foodInfo[0].saturated_fat, foodInfo[0].cholesterol, 
+          foodInfo[0].protein, foodInfo[0].calcium, foodInfo[0].sodium]);
+        console.log('사용자의 식단 정보가 업데이트되었습니다.');
+        res.send('식단 정보가 업데이트되었습니다.');
+      } else {
+        // 해당 음식에 대한 영양 정보가 없는 경우
+        res.status(404).send('해당 음식의 영양 정보를 찾을 수 없습니다.');
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('서버 에러 발생');
+    }
+});
+
+app.get('/totalInfo', async (req, res) => {
     const { email, date } = req.query;
 
     if (!email) {
@@ -228,10 +296,10 @@ app.get('/mealInfo', async (req, res) => {
             const totals = results[0];
             if (totals.totalCarbs !== null) { // 합계가 계산된 경우
                 res.json({
-                    carbs: totals.totalCarbs,
-                    protein: totals.totalProtein,
-                    fat: totals.totalFat,
-                    calories: totals.totalCalories
+                    totalCarbs: totals.totalCarbs,
+                    totalProtein: totals.totalProtein,
+                    totalFat: totals.totalFat,
+                    totalCalories: totals.totalCalories
                 });
             } else {
                 res.send("해당 날짜에 대한 식단 정보가 없습니다.");
@@ -247,125 +315,87 @@ app.get('/mealInfo', async (req, res) => {
     }
 });
 
+app.get('/mealInfo', async (req, res) => {
+    const { email, date } = req.query;
+
+    if (!email) {
+        return res.status(400).send("이메일 파라미터가 필요합니다.");
+    }
+    if (!date) {
+        return res.status(400).send("날짜 파라미터가 필요합니다.");
+    }
+
+    try {
+        const [results] = await db.query(`
+            SELECT *
+            FROM users_diet 
+            WHERE user_email = ? AND date = ?`, 
+            [email, date]
+        );
+        // 데이터가 없는 경우 빈 배열을 반환
+        res.json(results || []);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("서버 오류가 발생했습니다.");
+    }
+});
+
+app.post('/deleteMeal', async (req, res) => {
+    const { email, date, food_name, meal_type } = req.query;
+
+    try {
+      await db.query('DELETE FROM users_diet WHERE user_email = ? AND date = ? AND food_name = ? AND meal_type = ?', 
+        [email, date, food_name, meal_type]);
+      console.log('음식 정보가 삭제되었습니다.');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('서버 에러 발생');
+    }
+});
+
+app.get('/run-python-dr', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    const { email, date } = req.query;
+
+    if (!email) {
+        return res.status(400).send("이메일 파라미터가 필요합니다.");
+    }
+
+    try {
+        // 데이터베이스에서 사용자 정보와 식단 정보를 가져옴
+        const [userResults] = await db.query(`SELECT * FROM users WHERE email = ?`, [email]);
+        const [dietResults] = await db.query(`SELECT * FROM users_diet WHERE user_email = ? AND date = ?`, [email, date]);
+
+        // 사용자 정보와 식단 정보를 JSON 문자열로 변환
+        const userInfo = JSON.stringify(userResults);
+        const dietInfo = JSON.stringify(dietResults);
+
+        // 파이썬 스크립트 실행
+        const pythonProcess = spawn('python', ['./model/diet_recommendations.py', userInfo, dietInfo], {
+            env: { ...process.env, PYTHONIOENCODING: 'utf-8' }  // 한글 안 깨지게
+        });
+        let outputData = '';
+
+        pythonProcess.stdout.setEncoding('utf8');
+        pythonProcess.stdout.on('data', (data) => {
+            outputData += data.toString();
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+        });
+
+        pythonProcess.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+            res.send(outputData); // 파이썬 스크립트의 출력을 클라이언트에 전송
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("서버 오류가 발생했습니다.");
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
-/*
-const express = require('express')
-const session = require('express-session')
-const path = require('path');
-const app = express()
-const port = 3001
-
-const db = require('./lib/db');
-const sessionOption = require('./lib/sessionOption');
-const bodyParser = require("body-parser");
-const bcrypt = require('bcrypt');
-
-app.use(express.static(path.join(__dirname, '/pages')));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-var MySQLStore = require('express-mysql-session')(session);
-var sessionStore = new MySQLStore(sessionOption);
-app.use(session({  
-	key: 'session_cookie_name',
-    secret: '~',
-	store: sessionStore,
-	resave: false,
-	saveUninitialized: false
-}))
-
-app.get('/', (req, res) => {    
-    req.sendFile(path.join(__dirname, '/pages/Signin.js'));
-})
-
-app.get('/authcheck', (req, res) => {      
-    const sendData = { isLogin: "" };
-    if (req.session.is_logined) {
-        sendData.isLogin = "True"
-    } else {
-        sendData.isLogin = "False"
-    }
-    res.send(sendData);
-})
-
-app.get('/logout', function (req, res) {
-    req.session.destroy(function (err) {
-        res.redirect('/');
-    });
-});
-
-app.post("/login", (req, res) => { // 데이터 받아서 결과 전송
-    const username = req.body.userId;
-    const password = req.body.userPassword;
-    const sendData = { isLogin: "" };
-
-    if (username && password) {             // id와 pw가 입력되었는지 확인
-        db.query('SELECT * FROM userTable WHERE username = ?', [username], function (error, results, fields) {
-            if (error) throw error;
-            if (results.length > 0) {       // db에서의 반환값이 있다 = 일치하는 아이디가 있다.      
-
-                bcrypt.compare(password , results[0].password, (err, result) => {    // 입력된 비밀번호가 해시된 저장값과 같은 값인지 비교
-
-                    if (result === true) {                  // 비밀번호가 일치하면
-                        req.session.is_logined = true;      // 세션 정보 갱신
-                        req.session.nickname = username;
-                        req.session.save(function () {
-                            sendData.isLogin = "True"
-                            res.send(sendData);
-                        });
-                        db.query(`INSERT INTO logTable (created, username, action, command, actiondetail) VALUES (NOW(), ?, 'login' , ?, ?)`
-                            , [req.session.nickname, '-', `React 로그인 테스트`], function (error, result) { });
-                    }
-                    else{                                   // 비밀번호가 다른 경우
-                        sendData.isLogin = "로그인 정보가 일치하지 않습니다."
-                        res.send(sendData);
-                    }
-                })                      
-            } else {    // db에 해당 아이디가 없는 경우
-                sendData.isLogin = "아이디 정보가 일치하지 않습니다."
-                res.send(sendData);
-            }
-        });
-    } else {            // 아이디, 비밀번호 중 입력되지 않은 값이 있는 경우
-        sendData.isLogin = "아이디와 비밀번호를 입력하세요!"
-        res.send(sendData);
-    }
-});
-
-app.post("/signin", (req, res) => {  // 데이터 받아서 결과 전송
-    const username = req.body.userId;
-    const password = req.body.userPassword;
-    const password2 = req.body.userPassword2;
-    
-    const sendData = { isSuccess: "" };
-
-    if (username && password && password2) {
-        db.query('SELECT * FROM userTable WHERE username = ?', [username], function(error, results, fields) { // DB에 같은 이름의 회원아이디가 있는지 확인
-            if (error) throw error;
-            if (results.length <= 0 && password == password2) {         // DB에 같은 이름의 회원아이디가 없고, 비밀번호가 올바르게 입력된 경우
-                const hasedPassword = bcrypt.hashSync(password, 10);    // 입력된 비밀번호를 해시한 값
-                db.query('INSERT INTO userTable (username, password) VALUES(?,?)', [username, hasedPassword], function (error, data) {
-                    if (error) throw error;
-                    req.session.save(function () {                        
-                        sendData.isSuccess = "True"
-                        res.send(sendData);
-                    });
-                });
-            } else if (password != password2) {                     // 비밀번호가 올바르게 입력되지 않은 경우                  
-                sendData.isSuccess = "입력된 비밀번호가 서로 다릅니다."
-                res.send(sendData);
-            }
-            else {                                                  // DB에 같은 이름의 회원아이디가 있는 경우            
-                sendData.isSuccess = "이미 존재하는 아이디 입니다!"
-                res.send(sendData);  
-            }            
-        });        
-    } else {
-        sendData.isSuccess = "아이디와 비밀번호를 입력하세요!"
-        res.send(sendData);  
-    }
-    
-});
-*/

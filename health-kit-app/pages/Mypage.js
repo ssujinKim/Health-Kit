@@ -15,10 +15,13 @@ export default function Mypage({navigation, route}) {
     disease1: '',
     disease2: '',
     disease3: '',
+    medicine1: '',
+    medicine2: '',
+    medicine3: ''
   });
 
   // userInfo에서 각 필드를 추출
-  const {nickname, height, weight, age, disease1, disease2, disease3} = userInfo;
+  const {nickname, height, weight, age, disease1, disease2, disease3, medicine1, medicine2, medicine3} = userInfo;
 
   useEffect(() => {
     navigation.setOptions({
@@ -31,7 +34,7 @@ export default function Mypage({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://192.168.35.243:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://192.168.0.8:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -46,6 +49,9 @@ export default function Mypage({navigation, route}) {
             disease1: data.disease1,
             disease2: data.disease2,
             disease3: data.disease3,
+            medicine1: data.medicine1,
+            medicine2: data.medicine2,
+            medicine3: data.medicine3
           });
         })
         .catch((error) => {
@@ -55,7 +61,7 @@ export default function Mypage({navigation, route}) {
 
     // useEffect 내부에서 fetchUserInfo를 호출하여 사용자 정보를 가져옴
     fetchUserInfo();
-  }, [userInfo]); // email이 변경될 때마다 useEffect를 다시 실행
+  }, [userInfo]);
 
   return (
     <ScrollView style={styles.container}>
@@ -101,7 +107,9 @@ export default function Mypage({navigation, route}) {
         </View>
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>복용중인 약</Text>
-          <Text style={styles.statusOutput}>사이클로스포린</Text>
+          <Text style={styles.statusOutput}>
+            {medicine1} {medicine2} {medicine3}
+          </Text>
         </View>
       </View>
       <View style={styles.horizontalLine2} />
