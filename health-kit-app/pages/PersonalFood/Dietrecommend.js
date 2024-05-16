@@ -1,6 +1,8 @@
+// 필요없는 코드는 빼주세요 수진씨.
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, ActivityIndicator, Image} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import axios from 'axios';
+import {CheckBox} from 'react-native-elements';
 
 export default function Dietrecommend({navigation, route}) {
   const {email} = route.params;
@@ -28,7 +30,12 @@ export default function Dietrecommend({navigation, route}) {
       headerTintColor: 'black',
     });
 
-    axios.get(`http://10.50.249.191:3000/run-python-dr?email=${encodeURIComponent(email)}&date=${encodeURIComponent(todayDate)}`)
+    axios
+      .get(
+        `http://10.50.213.228:3000/run-python-dr?email=${encodeURIComponent(
+          email
+        )}&date=${encodeURIComponent(todayDate)}`
+      )
       .then((response) => {
         console.log(response.data);
         setPythonData(response.data);
@@ -40,35 +47,55 @@ export default function Dietrecommend({navigation, route}) {
       });
   }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={styles.loadingText}>식단 추천 중...</Text>
-      </View>
-    );
-  }
+  const [preferences, setPreferences] = useState({
+    lower30Energy: false,
+    upper30Energy: false,
+    lowFat: false,
+    highProtein: false,
+    lowSodium: false,
+    lowCarb: false,
+  });
+
+  // 영양소 한국어 매핑
+  const preferenceLabels = {
+    lower30Energy: '에너지 30% 미만',
+    upper30Energy: '에너지 30% 초과',
+    lowFat: '저지방',
+    highProtein: '고단백',
+    lowSodium: '저나트륨',
+    lowCarb: '저탄수화물',
+  };
+
+  const togglePreference = (preference) => {
+    setPreferences((prevPreferences) => ({
+      ...prevPreferences,
+      [preference]: !prevPreferences[preference],
+    }));
+  };
+
+  const handleNext = () => {
+    // navigation.navigate('RecommendresultPage');
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.loadingText}>{pythonData}</Text>
-      <Text style={{marginLeft: 25, marginTop: 30, fontSize: 20, fontWeight: 'bold'}}>
-        기준 영양성분을 토대로 추천해드려요 :)
-      </Text>
-      <View style={styles.foodContainer}>
-        <View style={styles.foodBox}>
-          <Image
-            source={require('./../../assets/foodimages/bibimbap.jpg')}
-            style={{width: 100, height: 100, left: 10, alignSelf: 'center', borderRadius: 10}}
+    <View style={styles.container}>
+      <Text>영양성분을 선택해주세요 (중복선택가능)</Text>
+      {Object.keys(preferences).map((preference) => (
+        <View key={preference} style={styles.preference}>
+          <CheckBox
+            checked={preferences[preference]}
+            onPress={() => togglePreference(preference)}
           />
-          <View style={styles.foodMenu}>
-            <Text style={styles.foodText}>비빕밥</Text>
-            <View style={styles.horizontalLine} />
-            <Text style={styles.kcalText}>650 kcal</Text>
-          </View>
+          {/* 한국어 라벨 사용 */}
+          <Text style={styles.text}>{preferenceLabels[preference]}</Text>
         </View>
+      ))}
+      <View style={styles.continue}>
+        <TouchableOpacity style={styles.continueButton} onPress={handleNext}>
+          <Text style={styles.continuebuttonText}>계속하기</Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -76,61 +103,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  foodContainer: {
-    flex: 1,
-    justifyContent: 'center',
+  preference: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 30,
+    marginBottom: 10,
   },
-  foodBox: {
-    flexDirection: 'row',
-    width: '90%',
-    height: 130,
-    backgroundColor: 'white',
-    marginHorizontal: 10,
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
-    marginBottom: 20,
+  text: {
+    marginLeft: 8,
   },
-  foodMenu: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  foodText: {
-    lineHeight: 70,
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginLeft: 30,
-  },
-  horizontalLine: {
+  continue: {
     position: 'absolute',
-    top: 50,
-    left: 22,
-    borderBottomColor: 'lightgray',
-    borderBottomWidth: 1,
-    width: '90%',
-  },
-  kcalText: {
-    marginTop: 100,
-    marginLeft: 100,
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  loadingContainer: {
-    flex: 1,
+    bottom: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5fcff',
+    width: '100%',
   },
-  loadingText: {
-    marginTop: 20, // 로딩 인디케이터와 텍스트 사이 간격
-    fontSize: 20, // 텍스트 크기
+  continueButton: {
+    backgroundColor: 'green',
+    paddingVertical: 15,
+    paddingHorizontal: 120,
+    borderRadius: 5,
+  },
+  continuebuttonText: {
+    fontSize: 32,
+    color: 'black',
+    fontWeight: 'bold',
   },
 });

@@ -17,11 +17,22 @@ export default function Mypage({navigation, route}) {
     disease3: '',
     medicine1: '',
     medicine2: '',
-    medicine3: ''
+    medicine3: '',
   });
 
   // userInfo에서 각 필드를 추출
-  const {nickname, height, weight, age, disease1, disease2, disease3, medicine1, medicine2, medicine3} = userInfo;
+  const {
+    nickname,
+    height,
+    weight,
+    age,
+    disease1,
+    disease2,
+    disease3,
+    medicine1,
+    medicine2,
+    medicine3,
+  } = userInfo;
 
   useEffect(() => {
     navigation.setOptions({
@@ -34,7 +45,7 @@ export default function Mypage({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://192.168.0.8:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://10.50.213.228:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -51,7 +62,7 @@ export default function Mypage({navigation, route}) {
             disease3: data.disease3,
             medicine1: data.medicine1,
             medicine2: data.medicine2,
-            medicine3: data.medicine3
+            medicine3: data.medicine3,
           });
         })
         .catch((error) => {

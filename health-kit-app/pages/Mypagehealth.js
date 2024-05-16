@@ -3,8 +3,8 @@ import {View, TouchableOpacity, Text, StyleSheet, TextInput, ScrollView, Alert} 
 import {Ionicons} from '@expo/vector-icons';
 import axios from 'axios';
 
-export default function Health({ navigation, route }) {
-  const { email } = route.params;
+export default function Health({navigation, route}) {
+  const {email} = route.params;
 
   const [userInfo, setUserInfo] = useState({
     email: '',
@@ -13,7 +13,7 @@ export default function Health({ navigation, route }) {
     age: 0,
     gender: '',
     diseases: ['', '', ''],
-    medicine: ['', '', '']
+    medicine: ['', '', ''],
   });
 
   // userInfo에서 각 필드를 추출
@@ -26,11 +26,15 @@ export default function Health({ navigation, route }) {
 
   const fetchSearchDisease = async (searchText, index) => {
     try {
-      const response = await axios.post('http://10.50.249.191:3000/searchDisease', { searchText });
+      const response = await axios.post('http://10.50.213.228:3000/searchDisease', {searchText});
       if (response.data.success) {
-        dSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? response.data.data : result));
+        dSetSearchResults((prevResults) =>
+          prevResults.map((result, idx) => (idx === index ? response.data.data : result))
+        );
       } else {
-        dSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? [] : result));
+        dSetSearchResults((prevResults) =>
+          prevResults.map((result, idx) => (idx === index ? [] : result))
+        );
       }
     } catch (error) {
       console.log(error);
@@ -42,7 +46,9 @@ export default function Health({ navigation, route }) {
       if (searchText && searchText.trim()) {
         fetchSearchDisease(searchText, index);
       } else {
-        dSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? [] : result));
+        dSetSearchResults((prevResults) =>
+          prevResults.map((result, idx) => (idx === index ? [] : result))
+        );
       }
     });
   }, [dSearchTexts]);
@@ -54,11 +60,15 @@ export default function Health({ navigation, route }) {
 
   const fetchSearchMedicine = async (searchText, index) => {
     try {
-      const response = await axios.post('http://192.168.0.8:3000/searchMedicine', { searchText });
+      const response = await axios.post('http://192.168.0.8:3000/searchMedicine', {searchText});
       if (response.data.success) {
-        mSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? response.data.data : result));
+        mSetSearchResults((prevResults) =>
+          prevResults.map((result, idx) => (idx === index ? response.data.data : result))
+        );
       } else {
-        mSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? [] : result));
+        mSetSearchResults((prevResults) =>
+          prevResults.map((result, idx) => (idx === index ? [] : result))
+        );
       }
     } catch (error) {
       console.log(error);
@@ -70,7 +80,9 @@ export default function Health({ navigation, route }) {
       if (searchText && searchText.trim()) {
         fetchSearchMedicine(searchText, index);
       } else {
-        mSetSearchResults(prevResults => prevResults.map((result, idx) => idx === index ? [] : result));
+        mSetSearchResults((prevResults) =>
+          prevResults.map((result, idx) => (idx === index ? [] : result))
+        );
       }
     });
   }, [mSearchTexts]);
@@ -86,7 +98,7 @@ export default function Health({ navigation, route }) {
 
     // 사용자 정보 불러오기
     const fetchUserInfo = () => {
-      const url = `http://10.50.249.191:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://10.50.213.228:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -100,7 +112,7 @@ export default function Health({ navigation, route }) {
             age: data.age,
             gender: data.gender,
             diseases: [data.disease1, data.disease2, data.disease3],
-            medicines: [data.medicine1, data.medicine2, data.medicine3]
+            medicines: [data.medicine1, data.medicine2, data.medicine3],
           });
 
           // 사용자 정보가 성공적으로 가져와진 후 정보를 검색창에 미리 띄워줌
@@ -128,10 +140,10 @@ export default function Health({ navigation, route }) {
         medicine3: mSearchTexts[2],
       };
       console.log(mSearchTexts[0]);
-      await axios.post('http://10.50.249.191:3000/updateUserInfo', updatedUserInfo);
+      await axios.post('http://10.50.213.228:3000/updateUserInfo', updatedUserInfo);
       console.log('건강 정보가 성공적으로 업데이트되었습니다.');
       Alert.alert('완료', '건강 정보가 성공적으로 업데이트되었습니다.', [
-        { text: '확인', onPress: () => navigation.navigate('Mypage', { email: email }) },
+        {text: '확인', onPress: () => navigation.navigate('Mypage', {email: email})},
       ]);
     } catch (error) {
       console.error('건강 정보를 업데이트하는 동안 에러가 발생했습니다:', error);
@@ -143,7 +155,7 @@ export default function Health({ navigation, route }) {
   const dRenderSearchBox = (index) => (
     <View>
       <View style={styles.searchBox}>
-        <Ionicons name="search" size={28} color="gray" style={{ marginLeft: 15 }} />
+        <Ionicons name="search" size={28} color="gray" style={{marginLeft: 15}} />
         <TextInput
           style={{
             marginLeft: 10,
@@ -154,18 +166,29 @@ export default function Health({ navigation, route }) {
           placeholder="질병 검색하기"
           placeholderTextColor="lightgray"
           value={dSearchTexts[index]}
-          onChangeText={(text) => dSetSearchTexts(prevTexts => prevTexts.map((t, idx) => idx === index ? text : t))}
-          onFocus={() => dSetIsFocused(prevFocused => prevFocused.map((f, idx) => idx === index ? true : f))}
+          onChangeText={(text) =>
+            dSetSearchTexts((prevTexts) => prevTexts.map((t, idx) => (idx === index ? text : t)))
+          }
+          onFocus={() =>
+            dSetIsFocused((prevFocused) => prevFocused.map((f, idx) => (idx === index ? true : f)))
+          }
         />
       </View>
-      {dIsFocused[index] && dSearchResults[index].map((disease, idx) => (
-        <TouchableOpacity key={idx} style={{ margin: 10 }} onPress={() => {
-          dSetSearchTexts(prevTexts => prevTexts.map((t, i) => i === index ? disease.disease_name : t));
-          dSetIsFocused(prevFocused => prevFocused.map((f, i) => i === index ? false : f));
-        }}>
-          <Text style={{ fontSize: 18 }}>{disease.disease_name}</Text>
-        </TouchableOpacity>
-      ))}
+      {dIsFocused[index] &&
+        dSearchResults[index].map((disease, idx) => (
+          <TouchableOpacity
+            key={idx}
+            style={{margin: 10}}
+            onPress={() => {
+              dSetSearchTexts((prevTexts) =>
+                prevTexts.map((t, i) => (i === index ? disease.disease_name : t))
+              );
+              dSetIsFocused((prevFocused) => prevFocused.map((f, i) => (i === index ? false : f)));
+            }}
+          >
+            <Text style={{fontSize: 18}}>{disease.disease_name}</Text>
+          </TouchableOpacity>
+        ))}
     </View>
   );
 
@@ -173,7 +196,7 @@ export default function Health({ navigation, route }) {
   const mRenderSearchBox = (index) => (
     <View>
       <View style={styles.searchBox}>
-        <Ionicons name="search" size={28} color="gray" style={{ marginLeft: 15 }} />
+        <Ionicons name="search" size={28} color="gray" style={{marginLeft: 15}} />
         <TextInput
           style={{
             marginLeft: 10,
@@ -184,24 +207,35 @@ export default function Health({ navigation, route }) {
           placeholder="의약품 검색하기"
           placeholderTextColor="lightgray"
           value={mSearchTexts[index]}
-          onChangeText={(text) => mSetSearchTexts(prevTexts => prevTexts.map((t, idx) => idx === index ? text : t))}
-          onFocus={() => mSetIsFocused(prevFocused => prevFocused.map((f, idx) => idx === index ? true : f))}
+          onChangeText={(text) =>
+            mSetSearchTexts((prevTexts) => prevTexts.map((t, idx) => (idx === index ? text : t)))
+          }
+          onFocus={() =>
+            mSetIsFocused((prevFocused) => prevFocused.map((f, idx) => (idx === index ? true : f)))
+          }
         />
       </View>
-      {mIsFocused[index] && mSearchResults[index].map((medicine, idx) => (
-        <TouchableOpacity key={idx} style={{ margin: 10 }} onPress={() => {
-          mSetSearchTexts(prevTexts => prevTexts.map((t, i) => i === index ? medicine.medicine_name : t));
-          mSetIsFocused(prevFocused => prevFocused.map((f, i) => i === index ? false : f));
-        }}>
-          <Text style={{ fontSize: 18 }}>{medicine.medicine_name}</Text>
-        </TouchableOpacity>
-      ))}
+      {mIsFocused[index] &&
+        mSearchResults[index].map((medicine, idx) => (
+          <TouchableOpacity
+            key={idx}
+            style={{margin: 10}}
+            onPress={() => {
+              mSetSearchTexts((prevTexts) =>
+                prevTexts.map((t, i) => (i === index ? medicine.medicine_name : t))
+              );
+              mSetIsFocused((prevFocused) => prevFocused.map((f, i) => (i === index ? false : f)));
+            }}
+          >
+            <Text style={{fontSize: 18}}>{medicine.medicine_name}</Text>
+          </TouchableOpacity>
+        ))}
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={[styles.scrollViewContent, { paddingBottom: 1200 }]}>
+      <ScrollView contentContainerStyle={[styles.scrollViewContent, {paddingBottom: 1200}]}>
         <View style={styles.content}>
           <Text style={styles.contentText}>기본 정보를 수정해주세요</Text>
           <View style={styles.form}>
@@ -268,7 +302,6 @@ export default function Health({ navigation, route }) {
               복용중인 약을 선택해주세요
             </Text>
             {mSearchTexts.map((_, index) => mRenderSearchBox(index))}
-
           </View>
         </View>
       </ScrollView>
