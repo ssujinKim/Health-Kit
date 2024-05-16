@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import {ScrollView, View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import logo from './../assets/logo.png';
-import UploadMode from './FoodPhoto/UploadMode';
+// import UploadMode from './FoodPhoto/UploadMode';
+import FoodInput from './FoodPhoto/FoodInput';
 
 export default function Main({navigation, route}) {
   const {email} = route.params;
@@ -80,7 +81,7 @@ export default function Main({navigation, route}) {
           </View>
         </View>
       </View>
-      <UploadMode
+      <FoodInput
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         navigation={navigation}

@@ -62,7 +62,7 @@ function UploadMode({visible, onClose}) {
     });
 
     try {
-      const response = await axios.post('http://192.168.0.8:3000/imageUpload', formData, {
+      const response = await axios.post('http://10.50.213.228:3000/imageUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   whiteBox: {
-    width: 300,
+    width: '75%',
     backgroundColor: 'white',
     borderRadius: 4,
     elevation: 2,

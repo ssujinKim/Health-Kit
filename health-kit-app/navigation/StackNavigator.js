@@ -10,6 +10,7 @@ import MainPage from '../pages/Main';
 import Mypage from '../pages/Mypage';
 import MypageinfoPage from '../pages/Mypageinfo';
 import MypagehealthPage from '../pages/Mypagehealth';
+import FoodInputPage from '../pages/FoodPhoto/FoodInput';
 import UploadModePage from '../pages/FoodPhoto/UploadMode';
 import FoodCameraPage from '../pages/FoodPhoto/FoodCamera';
 import LoadingPage from '../pages/FoodPhoto/Loading';
@@ -19,6 +20,7 @@ import MenuinputPage from '../pages/PersonalFood/Menuinput';
 import MenusearchPage from '../pages/PersonalFood/Menusearch';
 import MenuaddPage from '../pages/PersonalFood/Menuadd';
 import DietrecommendPage from '../pages/PersonalFood/Dietrecommend';
+import RecommendresultPage from '../pages/PersonalFood/Recommendresult';
 import AdvicePage from '../pages/Advice/Advice';
 
 const Stack = createStackNavigator();
@@ -53,6 +55,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Mypage" component={Mypage} />
       <Stack.Screen name="MypageinfoPage" component={MypageinfoPage} />
       <Stack.Screen name="MypagehealthPage" component={MypagehealthPage} />
+      <Stack.Screen name="FoodInputPage" component={FoodInputPage} />
       <Stack.Screen name="UploadModePage" component={UploadModePage} />
       <Stack.Screen name="FoodCameraPage" component={FoodCameraPage} />
       <Stack.Screen name="LoadingPage" component={LoadingPage} />
@@ -62,6 +65,7 @@ const StackNavigator = () => {
       <Stack.Screen name="MenusearchPage" component={MenusearchPage} />
       <Stack.Screen name="MenuaddPage" component={MenuaddPage} />
       <Stack.Screen name="DietrecommendPage" component={DietrecommendPage} />
+      <Stack.Screen name="RecommendresultPage" component={RecommendresultPage} />
       <Stack.Screen name="AdvicePage" component={AdvicePage} />
     </Stack.Navigator>
   );

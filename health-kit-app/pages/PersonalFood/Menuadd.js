@@ -43,7 +43,7 @@ export default function Menuadd({navigation, route}) {
     try {
       console.log(route.params);
       const todayDate = getFormattedDate(); // 오늘 날짜를 구함
-      const response = await axios.post('http://10.50.249.191:3000/menuAdd', {
+      const response = await axios.post('http://10.50.213.228:3000/menuAdd', {
         email: email,
         food: food,
         carbs: carbs,
@@ -77,23 +77,39 @@ export default function Menuadd({navigation, route}) {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>탄수화물(g)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" onChangeText={(text) => setCarbs(text)}
-              keyboardType="numeric"/>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(text) => setCarbs(text)}
+                keyboardType="numeric"
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>단백질(g)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" onChangeText={(text) => setProtein(text)}
-              keyboardType="numeric"/>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(text) => setProtein(text)}
+                keyboardType="numeric"
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>지방(g)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" onChangeText={(text) => setFat(text)}
-              keyboardType="numeric"/>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(text) => setFat(text)}
+                keyboardType="numeric"
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textStyle}>칼로리(kcal)</Text>
-              <TextInput style={styles.input} underlineColorAndroid="transparent" onChangeText={(text) => setCalories(text)}
-              keyboardType="numeric"/>
+              <TextInput
+                style={styles.input}
+                underlineColorAndroid="transparent"
+                onChangeText={(text) => setCalories(text)}
+                keyboardType="numeric"
+              />
             </View>
           </View>
         </View>
