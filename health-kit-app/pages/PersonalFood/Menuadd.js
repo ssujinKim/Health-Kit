@@ -43,7 +43,7 @@ export default function Menuadd({navigation, route}) {
     try {
       console.log(route.params);
       const todayDate = getFormattedDate(); // 오늘 날짜를 구함
-      const response = await axios.post('http://10.50.213.228:3000/menuAdd', {
+      const response = await axios.post('http://10.50.249.191:3000/menuAdd', {
         email: email,
         food: food,
         carbs: carbs,

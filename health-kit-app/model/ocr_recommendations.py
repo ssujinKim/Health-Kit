@@ -4,22 +4,92 @@ import pandas as pd
 import numpy as np
 import random
 import re
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
+import requests
+import json
+import base64
+import cv2
 
 import sys
 import json
 
-# 인자로 전달된 사용자 정보와 식단 정보를 로드합니다.
-user_info = json.loads(sys.argv[1])
-diet_info = json.loads(sys.argv[2])
+sys.stdout.reconfigure(encoding='utf-8')  # 한글 안 깨지게
 
-# user_info 딕셔너리에서 필요한 값을 추출합니다.
-age = user_info[0].get('age')
-gender = user_info[0].get('gender')
-disease = user_info[0].get('disease1', [])  # 기본값으로 빈 리스트를 설정하였습니다.
+# 인자의 개수 검사
+if len(sys.argv) < 6:
+    print("필요한 인자가 부족합니다.")
+    sys.exit()
 
+# 명령줄 인수로부터 user_info와 diet_info를 JSON 형태로 읽어오기
+try:
+    user_info = json.loads(sys.argv[1])
+    diet_info = json.loads(sys.argv[2])
+except IndexError:
+    # sys.argv에서 필요한 인수를 받지 못한 경우
+    print("필요한 인수가 제공되지 않았습니다.")
+    sys.exit(1) # 프로그램 종료
+except json.JSONDecodeError:
+    # JSON 형태로 변환하는 데 실패한 경우
+    print("입력 형식이 잘못되었습니다. JSON 문자열을 확인해주세요.")
+    sys.exit(1) # 프로그램 종료
+
+# user_info 딕셔너리에서 필요한 값을 추출
+user_age = user_info[0].get('age')
+user_gender = user_info[0].get('gender')
+user_disease = []
+
+# 각 질병 정보를 시도하여 존재하는 경우 리스트에 추가
+disease1 = user_info[0].get('disease1')
+if disease1:
+    user_disease.append(disease1)
+
+disease2 = user_info[0].get('disease2')
+if disease2:
+    user_disease.append(disease2)
+
+disease3 = user_info[0].get('disease3')
+if disease3:
+    user_disease.append(disease3)
+
+productName = sys.argv[3]
+calories = sys.argv[4]
+calorieType = sys.argv[5]
+
+# 각 변수에 대한 'null' 값 (이 경우 빈 문자열) 처리
+if not productName:
+    print("식품명 값이 입력되지 않았습니다.")
+    sys.exit()
+
+if not calories:
+    print("칼로리 값이 입력되지 않았습니다.")
+    sys.exit()
+
+if not calorieType:
+    print("calorieType이(가) 비어있습니다.")
+    sys.exit()
+    
+# 각 영양소 값을 추출하고, None 값이면 0을 기본값으로 사용합니다.
+def safe_float(value):
+    try:
+        return float(value or 0)
+    except ValueError:
+        return 0.0
+
+diet_info_item = diet_info[0] if diet_info and len(diet_info) > 0 else {}
+
+Kcal = round(safe_float(diet_info_item.get('totalCalories', 0)), 2)
+carbo = round(safe_float(diet_info_item.get('totalCarbs', 0)), 2)
+sugars = round(safe_float(diet_info_item.get('totalSugars', 0)), 2)
+fats = round(safe_float(diet_info_item.get('totalFat', 0)), 2)
+trans_fats = round(safe_float(diet_info_item.get('totalTransFat', 0)), 2)
+saturated_fats = round(safe_float(diet_info_item.get('totalSaturatedFat', 0)), 2)
+cholesterol = round(safe_float(diet_info_item.get('totalCholesterol', 0)), 2)
+protein = round(safe_float(diet_info_item.get('totalProtein', 0)), 2)
+calcium = round(safe_float(diet_info_item.get('totalCalcium', 0)), 2)
+sodium = round(safe_float(diet_info_item.get('totalSodium', 0)), 2)
+
+# 결과 출력
+print(Kcal, carbo, sugars, fats, trans_fats, saturated_fats, cholesterol, protein, calcium, sodium)
+print(productName, calories, calorieType)
 
 file_path = 'C:/Users/kkuu2/Downloads/food_data.csv'
 df = pd.read_csv(file_path, encoding='utf-8')
@@ -104,21 +174,6 @@ class Person:
             for key, value in negative_values.items():
                 print("일일 영양성분 초과입니다 ")
                 print(f"{key}")
-    #매일 매일 섭취정보 초기화
-    def daily_reset(self):
-        self.cal_nut()
-        self.carbo = self.c
-        self.sugars = self.s
-        self.fats = self.f
-        self.trans_fats = self.t
-        self.saturated_fats = self.sa
-        self.cholesterol = self.ch
-        self.protein = self.p
-        self.calcium = self.ca
-        self.sodium = self.so
-        self.today_pro = []
-        self.today_car = []
-        self.today_fat = []
 
     #여유분의 에너지 반환
     def extra_nut(self):
@@ -139,11 +194,6 @@ class Person:
         self.calcium -= cal
         self.sodium -= sod
         self.append_eat(kal,pro,car,fat) #음식 섭취시에 자동으로 추가
-        
-    def custom(self, **key):
-        for nut, val in key.items():
-            if hasattr(self, nut):
-                setattr(self, nut, val)
 
     #질병 반환
     def disease_return(self):
@@ -151,21 +201,59 @@ class Person:
     #질병 추가
     def append_disease(self,disease):
         self.disease.append(disease)
-    #오늘 섭취한음식 리스트에 추가 그림그리기용
-    def append_eat(self, kcal, pro, car, fat): #오늘 섭취한 음식 추가
-        if len(self.today_kcal) > 0:
-            kcal += self.today_kcal[-1] 
-        self.today_kcal.append(kcal)
-        self.today_pro.append(pro)
-        self.today_car.append(car)
-        self.today_fat.append(fat)
-    #오늘 섭취한 음식 리스트 반환
-    def return_eat(self):
-        return self.today_kcal, self.today_pro, self.today_car, self.today_fat
-    
-import json
-import pandas as pd
-import re
+
+
+#네이버 ocr key
+URL = 'https://br2v3ztqo2.apigw.ntruss.com/custom/v1/29704/b24823359e042057eab283525ace201f34c9cd5c8c2a53214a43b5f4dd6b268d/general'
+KEY = 'TWNsdFhOQlZTU3JsVEx0R1hxaFRDbXpnblBBYUxmUFE='
+
+#이미지 받아오기 test 이미지임
+path = 'ocr/to/photo.jpg'
+
+#이미지 불러오기 후 화면에 5초 보여줌
+# 변경 사항 -> roi 없이 이미지 그대로 roi_img로 받아오게 됨 
+image = cv2.imread(path) #이미지 로드
+cv2.imshow('image',image) #이미지 보여줌
+cv2.waitKey(5000) #5초 정도 후 꺼짐 
+#roi_img 경로로 이미지 저장 이후 ocr 인식이 되는 최종 이미지임
+cv2.imwrite('ocr/roi_img/roi_img.png',image) 
+#시스템 정리
+cv2.destroyAllWindows()
+
+#위에서 저장된 roi_img를 받아와서 ocr로 읽어온 후 json 파일로 저장 --- 
+path = 'ocr/roi_img/'
+with open(path + "roi_img.png", "rb") as f:
+    img = base64.b64encode(f.read())
+
+#json 파일로 저장될 경로 지정
+output_file = 'ocr/json_file/img_json_file.json'
+
+#ocr 코드
+headers = {
+    "Content-Type": "application/json",
+    "X-OCR-SECRET": KEY
+}
+data = {
+    "version": "V1",
+    "requestId": "sample_id", # 요청을 구분하기 위한 ID, 사용자가 정의
+    "timestamp": 0, # 현재 시간값
+    "images": [
+        {
+            "name": "sample_image",
+            "format": "png",
+            "data": img.decode('utf-8')
+        }
+    ]
+}
+
+#json 파일로 변경 코드 
+data = json.dumps(data)
+response = requests.post(URL, data=data, headers=headers)
+res = json.loads(response.text)
+
+#json 데이터를 파일에 저장하는 코드
+with open(output_file, 'w', encoding='utf-8') as outfile:
+    json.dump(res, outfile, indent=4, ensure_ascii=False)
 
 #json 파일 읽어오기
 with open( 'ocr/json_file/img_json_file.json', encoding='utf-8') as file:
@@ -256,7 +344,6 @@ if len(my_list) != 0:
     result[key_name] = lst_2
 
 
-
 def consume_food(per, kal=0, car=0, sug=0, fat=0, trans=0, sat=0, chol=0, pro=0, cal=0, sod=0):
     # 오늘의 여유분 계산
     kcal, carbo, sugars, fats, trans_fats,sat_fats, cholesterol, protein, calcium, sodium = per.extra_nut()  
@@ -289,15 +376,18 @@ def con_df(df, per):
     saturated_fat = make_num(df.at[0, '포화지방'])
     cholesterol = make_num(df.at[0, '콜레스테롤'])
     protein = make_num(df.at[0, '단백질'])
-    calcium = make_num(df.at[0, '칼슘'])
-    consume_food(per, kal=0, car=int(carbohydrates[0]), sug=int(sugars[0]), fat=int(fat[0]), trans=int(trans_fat[0]), sat=int(saturated_fat[0]), chol=int(cholesterol[0]), pro=int(protein[0]), cal=int(calcium[0]), sod=int(sodium[0]))
+    #calcium = make_num(df.at[0, '칼슘'])
+    consume_food(per, kal=0, car=int(carbohydrates[0]), sug=int(sugars[0]), fat=int(fat[0]), trans=int(trans_fat[0]), sat=int(saturated_fat[0]), chol=int(cholesterol[0]), pro=int(protein[0]), sod=int(sodium[0]))
 # 숫자 +글자에서 숫자만 출력함
 def make_num(text):
     numbers = re.findall(r'\d+', text)
+    if not numbers:  # 숫자가 없는 경우
+        return [0]  # 0을 포함한 리스트 반환
     return numbers
 
 #데이터 프레임으로 받아오기         
 img_df = pd.DataFrame(result)
-person = Person(age=25, gender='female', disease=['간경화'])
-result = con_df(img_df,person)
-print(result)
+person = Person(age=user_age, gender=user_gender, disease=user_disease)
+print(f"Age: {person.age}, Gender: {person.gender}, Disease: {person.disease}")
+#print(img_df)
+con_df(img_df,person)

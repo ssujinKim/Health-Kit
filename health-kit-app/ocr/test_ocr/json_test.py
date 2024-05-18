@@ -27,10 +27,12 @@ infer_sentence=field_infertext(field_data)
 # 데이터 전처리
 #name은 추가될 수 있음
 name = "나트륨|탄수화물|당류|지방|트랜스지방|포화지방|콜레스테롤|단백질|비타민B1|비타민B2|비타민B6|칼슘"
+name_lst = ['나트륨','탄수화물','당류','지방','트랜스지방','포화지방','콜레스테롤','단백질','비타민B1','비타민B2','비타민B6','비타민A','비타민C','비타민D','비타민E','칼슘']
 result = {}
 #딕셔너리 형태로 받아옴 ex) {나트륨:610mg,31%, 탄수화물:54g,17%, ....}
 current_item = None
 current_values = []
+
 for item in infer_sentence:
     m_item=re.match(name, item)
     if m_item is not None:
@@ -50,6 +52,7 @@ for item in infer_sentence:
 if current_item is not None:
     result[current_item] = current_values
 
+
 #위에 받아온 정보들을 전처리 하고 데이터 프레임으로 받아올 수 있도록 정제
 # g전처리 + 정규표현식 + value 에러 전처리----------------------------
 for key,val in result.items():
@@ -57,12 +60,13 @@ for key,val in result.items():
         if len(val) != 0:
             result[key][i] = re.findall(r'\d+|[a-zA-Z]+|%+', v)
     result[key] = sum(val,[])
-        
+     
 
 my_list = []  
 lst_2 = []
 key_name = list(result.keys())[0]
-#ipdb.set_trace()
+
+#--- 변경부분 ) 69 ~93 코드 부분 변경 다시 적용 부탁드려요 0g으로 수정이 안되는거 같길래 수정했어용
 for key_2, val_2 in result.items():
     for idx, v_2 in enumerate(val_2):
         if len(my_list) == 0:
@@ -76,21 +80,29 @@ for key_2, val_2 in result.items():
                 my_list = [] #리셋
             my_list.append(v_2)
         if len(lst_2) != 0 and idx == 0:
-            if len(lst_2) == 1 and lst_2 =='g':  
-                lst_2 = '0g'   #'0g'인데 'g'으로만 인식이 되어 '0g'으로 전처리
-            elif len(lst_2) == 1: 
+            if len(lst_2) == 1: 
                 lst_2.append('Nan')
-            elif len(lst_2) == 0:
+            if lst_2[0] == 'g': 
+                print('g',lst_2[0]) 
+                lst_2[0] = '0g'   #'0g'인데 'g'으로만 인식이 되어 '0g'으로 전처리
+            if len(lst_2) == 0:
                 lst_2.append('Nan','Nan')
             result[key_name] = lst_2
             key_name = key_2
             lst_2 = [] #리셋
+#----
+
 
 if len(my_list) != 0:
     join_str = ''.join(my_list)
     lst_2.append(join_str)
     result[key_name] = lst_2
 
+#---변경 부분) 없는 영양성분에 nan 값 넣어서 데이터 프레임에 추가함
+nan = ['Nan','Nan']
+for name_ls in name_lst:
+    if name_ls not in result:
+        result[name_ls]=nan
 
 #데이터 프레임으로 받아오기         
 df = pd.DataFrame(result)

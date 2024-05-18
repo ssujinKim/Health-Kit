@@ -182,37 +182,6 @@ app.post('/updateUserInfo', async (req, res) => {
       res.status(500).send('서버 에러 발생');
     }
 });
-  
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './ocr/to/') // 파일이 저장될 경로
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname) // 파일명
-    }
-});
-  
-const upload = multer({ storage: storage });
-  
-app.post('/imageUpload', upload.single('file'), (req, res) => {
-    res.send('파일이 성공적으로 업로드 되었습니다.');
-});
-
-app.get('/run-python-ocr', (req, res) => {
-    const pythonProcess = spawn('C:/Health-Kit/Health-Kit/health-kit-app/myvenv/Scripts/python.exe', ['./model/ocr_recommendations.py']);
-    let outputData = '';
-  
-    pythonProcess.stdout.on('data', (data) => {
-      console.error(`stderr: ${data}`);
-      outputData += data.toString();
-    });
-  
-    pythonProcess.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-      console.log(outputData);
-      res.send(outputData); // 파이썬 스크립트의 출력을 클라이언트에 전송
-    });
-});
 
 app.post("/searchFood", async (req, res) => {
     const searchText = req.body.searchText;
@@ -347,32 +316,56 @@ app.post('/deleteMeal', async (req, res) => {
       await db.query('DELETE FROM users_diet WHERE user_email = ? AND date = ? AND food_name = ? AND meal_type = ?', 
         [email, date, food_name, meal_type]);
       console.log('음식 정보가 삭제되었습니다.');
+      res.json({ message: '음식 정보가 삭제되었습니다.' });  // 이게 없으면 클라이언트 쪽에서 axios.post() 다음에 있는 것들을 실행 안 함
     } catch (err) {
       console.error(err);
-      res.status(500).send('서버 에러 발생');
+      res.status(500).json({ error: '서버 에러 발생' });
     }
 });
 
-app.get('/run-python-dr', async (req, res) => {
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './ocr/to/') // 파일이 저장될 경로
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname) // 파일명
+    }
+});
+  
+const upload = multer({ storage: storage });
+  
+app.post('/imageUpload', upload.single('file'), (req, res) => {
+    res.send('파일이 성공적으로 업로드 되었습니다.');
+});
+
+app.get('/run-python-ocr', async (req, res) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    const { email, date } = req.query;
+    const { email, date, productName, calories, calorieType } = req.query;
 
     if (!email) {
         return res.status(400).send("이메일 파라미터가 필요합니다.");
+    }
+    if (!date) {
+        return res.status(400).send("날짜 파라미터가 필요합니다.");
     }
 
     try {
         // 데이터베이스에서 사용자 정보와 식단 정보를 가져옴
         const [userResults] = await db.query(`SELECT * FROM users WHERE email = ?`, [email]);
-        const [dietResults] = await db.query(`SELECT * FROM users_diet WHERE user_email = ? AND date = ?`, [email, date]);
+        const [dietResults] = await db.query(`SELECT SUM(kcal) AS totalCalories, SUM(carbs) AS totalCarbs, 
+        SUM(sugars) AS totalSugars, SUM(fat) AS totalFat, SUM(trans_fat) AS totalTransFat, SUM(saturated_fat) AS totalSaturatedFat, 
+        SUM(cholesterol) AS totalCholesterol, SUM(protein) AS totalProtein, SUM(calcium) AS totalCalcium, SUM(sodium) AS totalSodium 
+        FROM users_diet 
+        WHERE user_email = ? AND date = ?`, [email, date]);
 
         // 사용자 정보와 식단 정보를 JSON 문자열로 변환
         const userInfo = JSON.stringify(userResults);
         const dietInfo = JSON.stringify(dietResults);
 
         // 파이썬 스크립트 실행
-        const pythonProcess = spawn('python', ['./model/diet_recommendations.py', userInfo, dietInfo], {
-            env: { ...process.env, PYTHONIOENCODING: 'utf-8' }  // 한글 안 깨지게
+        const pythonProcess = spawn('C:/Health-Kit/Health-Kit/health-kit-app/myvenv/Scripts/python.exe', 
+            ['./model/ocr_recommendations.py', userInfo, dietInfo, productName, calories, calorieType], {
+                env: { ...process.env, PYTHONIOENCODING: 'utf-8' } // 한글 안 깨지게
         });
         let outputData = '';
 
@@ -387,6 +380,57 @@ app.get('/run-python-dr', async (req, res) => {
 
         pythonProcess.on('close', (code) => {
             console.log(`child process exited with code ${code}`);
+            res.send(outputData); // 파이썬 스크립트의 출력을 클라이언트에 전송
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("서버 오류가 발생했습니다.");
+    }
+});
+
+app.get('/run-python-dr', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    const { email, date, preferences } = req.query;
+
+    if (!email) {
+        return res.status(400).send("이메일 파라미터가 필요합니다.");
+    }
+    if (!date) {
+        return res.status(400).send("날짜 파라미터가 필요합니다.");
+    }
+
+    try {
+        // 데이터베이스에서 사용자 정보와 식단 정보를 가져옴
+        const [userResults] = await db.query(`SELECT * FROM users WHERE email = ?`, [email]);
+        const [dietResults] = await db.query(`SELECT SUM(kcal) AS totalCalories, SUM(carbs) AS totalCarbs, 
+        SUM(sugars) AS totalSugars, SUM(fat) AS totalFat, SUM(trans_fat) AS totalTransFat, SUM(saturated_fat) AS totalSaturatedFat, 
+        SUM(cholesterol) AS totalCholesterol, SUM(protein) AS totalProtein, SUM(calcium) AS totalCalcium, SUM(sodium) AS totalSodium 
+        FROM users_diet 
+        WHERE user_email = ? AND date = ?`, [email, date]);
+
+        // 사용자 정보와 식단 정보를 JSON 문자열로 변환
+        const userInfo = JSON.stringify(userResults);
+        const dietInfo = JSON.stringify(dietResults);
+
+        // 파이썬 스크립트 실행
+        const pythonProcess = spawn('C:/Health-Kit/Health-Kit/health-kit-app/myvenv/Scripts/python.exe', 
+            ['./model/diet_recommendations.py', userInfo, dietInfo, preferences], {
+                env: { ...process.env, PYTHONIOENCODING: 'utf-8' }  // 한글 안 깨지게
+        });
+        let outputData = '';
+
+        pythonProcess.stdout.setEncoding('utf8');
+        pythonProcess.stdout.on('data', (data) => {
+            outputData += data.toString();
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+        });
+
+        pythonProcess.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+            console.log('outputData:', outputData); // 여기에 로그 추가
             res.send(outputData); // 파이썬 스크립트의 출력을 클라이언트에 전송
         });
     } catch (error) {

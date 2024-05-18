@@ -4,21 +4,71 @@ import pandas as pd
 import numpy as np
 import random
 import re
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
 
 import sys
 import json
 
-# 인자로 전달된 사용자 정보와 식단 정보를 로드합니다.
-user_info = json.loads(sys.argv[1])
-diet_info = json.loads(sys.argv[2])
+sys.stdout.reconfigure(encoding='utf-8')  # 한글 안 깨지게
 
-# user_info 딕셔너리에서 필요한 값을 추출합니다.
-age = user_info[0].get('age')
-gender = user_info[0].get('gender')
-disease = user_info[0].get('disease1', [])  # 기본값으로 빈 리스트를 설정하였습니다.
+# 인자의 개수 검사
+if len(sys.argv) < 4:
+    print("필요한 인자가 부족합니다.")
+    sys.exit()
+
+# 명령줄 인수로부터 user_info와 diet_info를 JSON 형태로 읽어오기
+try:
+    user_info = json.loads(sys.argv[1])
+    diet_info = json.loads(sys.argv[2])
+except IndexError:
+    # sys.argv에서 필요한 인수를 받지 못한 경우
+    print("필요한 인수가 제공되지 않았습니다.")
+    sys.exit(1) # 프로그램 종료
+except json.JSONDecodeError:
+    # JSON 형태로 변환하는 데 실패한 경우
+    print("입력 형식이 잘못되었습니다. JSON 문자열을 확인해주세요.")
+    sys.exit(1) # 프로그램 종료
+
+# user_info 딕셔너리에서 필요한 값을 추출
+user_age = user_info[0].get('age')
+user_gender = user_info[0].get('gender')
+user_disease = []
+
+# 각 질병 정보를 시도하여 존재하는 경우 리스트에 추가
+disease1 = user_info[0].get('disease1')
+if disease1:
+    user_disease.append(disease1)
+
+disease2 = user_info[0].get('disease2')
+if disease2:
+    user_disease.append(disease2)
+
+disease3 = user_info[0].get('disease3')
+if disease3:
+    user_disease.append(disease3)
+
+# 각 영양소 값을 추출하고, None 값이면 0을 기본값으로 사용합니다.
+def safe_float(value):
+    try:
+        return float(value or 0)
+    except ValueError:
+        return 0.0
+
+diet_info_item = diet_info[0] if diet_info and len(diet_info) > 0 else {}
+
+Kcal = round(safe_float(diet_info_item.get('totalCalories', 0)), 2)
+carbo = round(safe_float(diet_info_item.get('totalCarbs', 0)), 2)
+sugars = round(safe_float(diet_info_item.get('totalSugars', 0)), 2)
+fats = round(safe_float(diet_info_item.get('totalFat', 0)), 2)
+trans_fats = round(safe_float(diet_info_item.get('totalTransFat', 0)), 2)
+saturated_fats = round(safe_float(diet_info_item.get('totalSaturatedFat', 0)), 2)
+cholesterol = round(safe_float(diet_info_item.get('totalCholesterol', 0)), 2)
+protein = round(safe_float(diet_info_item.get('totalProtein', 0)), 2)
+calcium = round(safe_float(diet_info_item.get('totalCalcium', 0)), 2)
+sodium = round(safe_float(diet_info_item.get('totalSodium', 0)), 2)
+
+# 카테고리
+preferences = sys.argv[3]
+preferences_list = [int(pref) for pref in preferences.split(',')]
 
 
 file_path = 'C:/Users/kkuu2/Downloads/food_data.csv'
@@ -105,21 +155,6 @@ class Person:
             for key, value in negative_values.items():
                 print("일일 영양성분 초과입니다 ")
                 print(f"{key}")
-    #매일 매일 섭취정보 초기화
-    def daily_reset(self):
-        self.cal_nut()
-        self.carbo = self.c
-        self.sugars = self.s
-        self.fats = self.f
-        self.trans_fats = self.t
-        self.saturated_fats = self.sa
-        self.cholesterol = self.ch
-        self.protein = self.p
-        self.calcium = self.ca
-        self.sodium = self.so
-        self.today_pro = []
-        self.today_car = []
-        self.today_fat = []
 
     #여유분의 에너지 반환
     def extra_nut(self):
@@ -255,13 +290,24 @@ def nat_rec(person, df, df2, sor, case):
 
 
 # 추출한 값으로 Person 인스턴스를 생성합니다.
-person = Person(age=age, gender=gender, disease=disease)
+person = Person(age=user_age, gender=user_gender, disease=user_disease)  # 영양성분 추가
 
-# 생성된 Person 인스턴스를 확인합니다. (예시)
-print(f"Age: {person.age}, Gender: {person.gender}, Disease: {person.disease}")
+# 확인
+#print(f"Age: {person.age}, Gender: {person.gender}, Disease: {person.disease}")
+#print(Kcal, carbo, sugars, fats, trans_fats, saturated_fats, cholesterol, protein, calcium, sodium)
+#print(preferences_list)
 
-person = Person(age=25, gender='female', disease=['간경화'])
+result = nat_rec(person, df[(df['분류'] == "밥류")], dis, sor, preferences_list)
 
-result = nat_rec(person, df, dis, sor, [1,3,4,5])
+#print(result['식품명'], result['에너지(kcal)_x'])
 
-print(result)
+
+def run_python_dr():
+    # 예시 데이터
+    food_names = result['식품명'].tolist()
+    energies = result['에너지(kcal)_x'].tolist()
+    
+    # 식품명과 에너지를 하나의 객체로 묶음
+    data = [{"food_name": name, "energy": energy} for name, energy in zip(food_names, energies)]
+    print(data)
+run_python_dr()

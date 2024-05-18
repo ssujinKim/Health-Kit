@@ -3,16 +3,16 @@ import {View, Text, StyleSheet, ScrollView, ActivityIndicator, Image} from 'reac
 import axios from 'axios';
 
 export default function Recommendresult({navigation, route}) {
-  const {email} = route.params;
+  const {email, preferences} = route.params;
 
   const [loading, setLoading] = useState(true);
-  const [pythonData, setPythonData] = useState('');
+  const [pythonData, setPythonData] = useState([]);
 
   // 오늘 날짜 함수
   const getFormattedDate = () => {
     let today = new Date();
     let year = today.getFullYear();
-    let month = ('0' + (today.getMonth() + 1)).slice(-2); // getMonth()는 0부터 시작하므로, +1 필요
+    let month = ('0' + (today.getMonth() + 1)).slice(-2);
     let day = ('0' + today.getDate()).slice(-2);
 
     return `${year}-${month}-${day}`;
@@ -29,20 +29,26 @@ export default function Recommendresult({navigation, route}) {
     });
 
     axios
-      .get(
-        `http://10.50.213.228:3000/run-python-dr?email=${encodeURIComponent(
-          email
-        )}&date=${encodeURIComponent(todayDate)}`
-      )
-      .then((response) => {
-        console.log(response.data);
-        setPythonData(response.data);
+    .get(`http://10.50.249.191:3000/run-python-dr?email=${email}&date=${todayDate}&preferences=${preferences}`)
+    .then((response) => {
+      console.log(response.data);
+      let data;
+      try {
+        // 서버에서 받은 데이터의 작은따옴표를 큰따옴표로 변환
+        const correctedData = response.data.replace(/'/g, '"');
+        data = JSON.parse(correctedData);
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      });
+        return;
+      }
+  setPythonData(data);
+  setLoading(false);
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+      setLoading(false);
+    });
   }, []);
 
   if (loading) {
@@ -56,23 +62,18 @@ export default function Recommendresult({navigation, route}) {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.loadingText}>{pythonData}</Text>
-      <Text style={{marginLeft: 25, marginTop: 30, fontSize: 20, fontWeight: 'bold'}}>
-        기준 영양성분을 토대로 추천해드려요 :)
-      </Text>
-      <View style={styles.foodContainer}>
-        <View style={styles.foodBox}>
-          <Image
-            source={require('./../../assets/foodimages/bibimbap.jpg')}
-            style={{width: 100, height: 100, left: 10, alignSelf: 'center', borderRadius: 10}}
-          />
-          <View style={styles.foodMenu}>
-            <Text style={styles.foodText}>비빕밥</Text>
-            <View style={styles.horizontalLine} />
-            <Text style={styles.kcalText}>650 kcal</Text>
+      <Text style={styles.introText}>기준 영양성분을 토대로 추천해드려요 :)</Text>
+      {pythonData.map((item, index) => (
+        <View key={index} style={styles.foodContainer}>
+          <View style={styles.foodBox}>
+            <View style={styles.foodMenu}>
+              <Text style={styles.foodText}>{item.food_name}</Text>
+              <View style={styles.horizontalLine} />
+              <Text style={styles.kcalText}>{item.energy} kcal</Text>
+            </View>
           </View>
         </View>
-      </View>
+      ))}
     </ScrollView>
   );
 }
@@ -80,6 +81,12 @@ export default function Recommendresult({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  introText: {
+    marginLeft: 25, 
+    marginTop: 30, 
+    fontSize: 20, 
+    fontWeight: 'bold'
   },
   foodContainer: {
     flex: 1,

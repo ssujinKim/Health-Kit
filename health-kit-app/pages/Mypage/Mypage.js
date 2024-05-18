@@ -17,22 +17,11 @@ export default function Mypage({navigation, route}) {
     disease3: '',
     medicine1: '',
     medicine2: '',
-    medicine3: '',
+    medicine3: ''
   });
 
   // userInfo에서 각 필드를 추출
-  const {
-    nickname,
-    height,
-    weight,
-    age,
-    disease1,
-    disease2,
-    disease3,
-    medicine1,
-    medicine2,
-    medicine3,
-  } = userInfo;
+  const {nickname, height, weight, age, disease1, disease2, disease3, medicine1, medicine2, medicine3} = userInfo;
 
   useEffect(() => {
     navigation.setOptions({
@@ -62,7 +51,7 @@ export default function Mypage({navigation, route}) {
             disease3: data.disease3,
             medicine1: data.medicine1,
             medicine2: data.medicine2,
-            medicine3: data.medicine3,
+            medicine3: data.medicine3
           });
         })
         .catch((error) => {
@@ -75,7 +64,7 @@ export default function Mypage({navigation, route}) {
   }, [userInfo]);
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.myinformationContent}>
         <TouchableOpacity
           style={styles.nameicon}
@@ -128,7 +117,7 @@ export default function Mypage({navigation, route}) {
         <Ionicons name="chatbubbles" size={28} color="black" />
         <Text style={styles.info}>진행중인 상담</Text>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 

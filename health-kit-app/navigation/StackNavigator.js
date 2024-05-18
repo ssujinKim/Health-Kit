@@ -7,13 +7,11 @@ import EmailPage from '../pages/Signup/Email';
 import PasswordPage from '../pages/Signup/Password';
 import HealthPage from '../pages/Signup/Health';
 import MainPage from '../pages/Main';
-import Mypage from '../pages/Mypage';
-import MypageinfoPage from '../pages/Mypageinfo';
-import MypagehealthPage from '../pages/Mypagehealth';
+import Mypage from '../pages/Mypage/Mypage';
+import MypageinfoPage from '../pages/Mypage/MypageInfo';
+import MypagehealthPage from '../pages/Mypage/MypageHealth';
 import FoodInputPage from '../pages/FoodPhoto/FoodInput';
 import UploadModePage from '../pages/FoodPhoto/UploadMode';
-import FoodCameraPage from '../pages/FoodPhoto/FoodCamera';
-import LoadingPage from '../pages/FoodPhoto/Loading';
 import FoodcheckPage from '../pages/FoodPhoto/Foodcheck';
 import FoodrecommendPage from '../pages/FoodPhoto/Foodrecommend';
 import MenuinputPage from '../pages/PersonalFood/Menuinput';
@@ -57,8 +55,6 @@ const StackNavigator = () => {
       <Stack.Screen name="MypagehealthPage" component={MypagehealthPage} />
       <Stack.Screen name="FoodInputPage" component={FoodInputPage} />
       <Stack.Screen name="UploadModePage" component={UploadModePage} />
-      <Stack.Screen name="FoodCameraPage" component={FoodCameraPage} />
-      <Stack.Screen name="LoadingPage" component={LoadingPage} />
       <Stack.Screen name="FoodcheckPage" component={FoodcheckPage} />
       <Stack.Screen name="FoodrecommendPage" component={FoodrecommendPage} />
       <Stack.Screen name="MenuinputPage" component={MenuinputPage} />

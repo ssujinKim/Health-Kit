@@ -67,7 +67,7 @@ export default function Menuinput({navigation, route}) {
     const fetchTotalInfo = async () => {
       if (!date) return; // date가 비어있는 경우 함수 실행 중지
 
-      const url = `http://10.50.213.228:3000/totalInfo?email=${encodeURIComponent(
+      const url = `http://10.50.249.191:3000/totalInfo?email=${encodeURIComponent(
         email
       )}&date=${encodeURIComponent(date)}`;
 
@@ -88,7 +88,7 @@ export default function Menuinput({navigation, route}) {
     };
 
     const fetchMealInfo = async () => {
-      const url = `http://10.50.213.228:3000/mealInfo?email=${email}&date=${encodeURIComponent(
+      const url = `http://10.50.249.191:3000/mealInfo?email=${email}&date=${encodeURIComponent(
         date
       )}`;
 
@@ -196,7 +196,7 @@ export default function Menuinput({navigation, route}) {
           onPress: async () => {
             try {
               await axios.post(
-                `http://10.50.213.228:3000/deleteMeal?email=${email}&date=${date}&food_name=${food_name}&meal_type=${mealType}`
+                `http://10.50.249.191:3000/deleteMeal?email=${email}&date=${date}&food_name=${food_name}&meal_type=${mealType}`
               );
               console.log('음식 삭제 완료');
               Alert.alert('완료', '음식 정보가 삭제되었습니다.', {text: '확인'});

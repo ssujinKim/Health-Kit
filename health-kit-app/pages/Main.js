@@ -26,7 +26,7 @@ export default function Main({navigation, route}) {
         <View style={styles.photoBox}>
           <TouchableOpacity
             onPress={() => {
-              setModalVisible(true); // 모달을 표시 // email 값 전달
+              setModalVisible(true); // 모달을 표시
             }}
           >
             <View style={styles.shootBox}>
@@ -62,7 +62,7 @@ export default function Main({navigation, route}) {
           <View style={styles.masterBox}>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('AdvicePage');
+                navigation.navigate('AdvicePage', {email: email});
               }}
             >
               <View style={styles.adviceBox}>
@@ -85,6 +85,7 @@ export default function Main({navigation, route}) {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         navigation={navigation}
+        email={email} // email 값 전달
       />
     </ScrollView>
   );
