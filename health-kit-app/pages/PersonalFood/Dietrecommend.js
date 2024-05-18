@@ -1,25 +1,9 @@
-// 필요없는 코드는 빼주세요 수진씨.
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import axios from 'axios';
 import {CheckBox} from 'react-native-elements';
 
 export default function Dietrecommend({navigation, route}) {
   const {email} = route.params;
-
-  const [loading, setLoading] = useState(true);
-  const [pythonData, setPythonData] = useState('');
-
-  // 오늘 날짜 함수
-  const getFormattedDate = () => {
-    let today = new Date();
-    let year = today.getFullYear();
-    let month = ('0' + (today.getMonth() + 1)).slice(-2); // getMonth()는 0부터 시작하므로, +1 필요
-    let day = ('0' + today.getDate()).slice(-2);
-
-    return `${year}-${month}-${day}`;
-  };
-  let todayDate = getFormattedDate();
 
   useEffect(() => {
     navigation.setOptions({
@@ -29,41 +13,27 @@ export default function Dietrecommend({navigation, route}) {
       },
       headerTintColor: 'black',
     });
-
-    axios
-      .get(
-        `http://10.50.213.228:3000/run-python-dr?email=${encodeURIComponent(
-          email
-        )}&date=${encodeURIComponent(todayDate)}`
-      )
-      .then((response) => {
-        console.log(response.data);
-        setPythonData(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      });
   }, []);
 
   const [preferences, setPreferences] = useState({
-    lower30Energy: false,
-    upper30Energy: false,
-    lowFat: false,
-    highProtein: false,
-    lowSodium: false,
-    lowCarb: false,
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+    7: false,
   });
 
   // 영양소 한국어 매핑
   const preferenceLabels = {
-    lower30Energy: '에너지 30% 미만',
-    upper30Energy: '에너지 30% 초과',
-    lowFat: '저지방',
-    highProtein: '고단백',
-    lowSodium: '저나트륨',
-    lowCarb: '저탄수화물',
+    1: '에너지 30% 미만',
+    2: '에너지 30% 초과',
+    3: '저지방',
+    4: '고단백',
+    5: '저나트륨',
+    6: '저탄수화물',
+    7: '저콜레스테롤',
   };
 
   const togglePreference = (preference) => {
@@ -74,7 +44,11 @@ export default function Dietrecommend({navigation, route}) {
   };
 
   const handleNext = () => {
-    // navigation.navigate('RecommendresultPage');
+    const filteredPreferences = Object.entries(preferences)
+      .filter(([key, value]) => value === true)
+      .map(([key, value]) => key);
+
+    navigation.navigate('RecommendresultPage', {email: email, preferences: filteredPreferences});
   };
 
   return (

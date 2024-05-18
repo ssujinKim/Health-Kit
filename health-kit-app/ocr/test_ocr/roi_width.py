@@ -53,7 +53,7 @@ data = {
 data = json.dumps(data)
 response = requests.post(URL, data=data, headers=headers)
 res = json.loads(response.text)
-print('파이썬 실행됨!')
+#print(res)
 
 #json 데이터를 파일에 저장하는 코드
 with open(output_file, 'w', encoding='utf-8') as outfile:

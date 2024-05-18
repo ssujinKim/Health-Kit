@@ -25,7 +25,7 @@ export default function Mypageinfo({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://192.168.35.243:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://10.50.249.191:3000/userInfo?email=${encodeURIComponent(email)}`;
       axios
         .get(url)
         .then((response) => {
@@ -48,7 +48,7 @@ export default function Mypageinfo({navigation, route}) {
   }, [email]);
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.myinformationContent}>
         <View style={styles.myinfo}>
           <Ionicons name="person" size={24} color="black" />
@@ -72,7 +72,7 @@ export default function Mypageinfo({navigation, route}) {
         <Text style={styles.plus}>로그아웃</Text>
         <Text style={styles.plus}>탈퇴하기</Text>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 

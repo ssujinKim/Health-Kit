@@ -1,12 +1,21 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, Modal, View, Pressable, Text, TextInput, TouchableOpacity} from 'react-native';
 import UploadMode from './UploadMode';
 
-export default function FoodInput({visible, onClose, navigation}) {
+export default function FoodInput({visible, onClose, navigation, email}) {
   const [productName, setProductName] = useState('');
   const [calories, setCalories] = useState('');
   const [calorieType, setCalorieType] = useState('total');
 
+  // `visible` 프로퍼티가 true로 변경될 때마다 초기화
+  useEffect(() => {
+    if (visible) {
+      setProductName('');
+      setCalories('');
+      setCalorieType('total');
+    }
+  }, [visible]);
+  
   // 체크박스 선택 핸들러
   const handleCheckboxChange = (type) => {
     setCalorieType(type);
@@ -15,7 +24,8 @@ export default function FoodInput({visible, onClose, navigation}) {
   const [modalVisible, setModalVisible] = useState(false); // UploadMode 모달 상태 관리
 
   const handleOpenUploadMode = () => {
-    setModalVisible(true);
+    console.log(productName, calories, calorieType);
+    setModalVisible(true); // UploadMode 모달 열기
     onClose(); // FoodInput 모달 닫기
   };
 
@@ -69,6 +79,10 @@ export default function FoodInput({visible, onClose, navigation}) {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         navigation={navigation}
+        email={email}
+        productName={productName}
+        calories={calories}
+        calorieType={calorieType}
       />
     </>
   );
