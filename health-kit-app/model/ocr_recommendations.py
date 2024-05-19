@@ -16,7 +16,7 @@ import json
 sys.stdout.reconfigure(encoding='utf-8')  # 한글 안 깨지게
 
 # 인자의 개수 검사
-if len(sys.argv) < 6:
+if len(sys.argv) < 7:
     print("필요한 인자가 부족합니다.")
     sys.exit()
 
@@ -66,8 +66,9 @@ if medicine3:
     user_medicine.append(medicine3)
 
 productName = sys.argv[3]
-calories = sys.argv[4]
-calorieType = sys.argv[5]
+amount = float(sys.argv[4])
+calories = float(sys.argv[5])
+calorieType = sys.argv[6]
 
 # 각 변수에 대한 'null' 값 (이 경우 빈 문자열) 처리
 if not productName:
@@ -390,17 +391,16 @@ def consume_food2(per, kal=0, car=0, sug=0, fat=0, trans=0, sat=0, chol=0, pro=0
     per.eat(kal, car, sug, fat, trans, sat, chol, pro, cal, sod)
     print("입력한 데이터가 입력되었습니다.")
 
-def con_df(df, per, case1, max1, #kal
-           ):
+def con_df(df, per, case1, max1, kal):
     case = 1
     if case1 == 0:
         case = 1
     if case1 == 1:
         case = max1 / 100
 
-    #df['칼로리'] = [str(kal),'1mg']
+    df['칼로리'] = str(kal)
 
-    #kal1 = make_num(df.at[0, '칼로리']) * case
+    kal1 = make_num(df.at[0, '칼로리']) * case
     sodium = make_num(df.at[0, '나트륨']) * case
     carbohydrates = make_num(df.at[0, '탄수화물']) * case
     sugars = make_num(df.at[0, '당류']) * case
@@ -411,8 +411,7 @@ def con_df(df, per, case1, max1, #kal
     protein = make_num(df.at[0, '단백질']) * case
     calcium = make_num(df.at[0, '칼슘']) * case
 
-    return consume_food(per, #kal=kal1, 
-                        car=carbohydrates, sug=sugars, fat=fat, trans=trans_fat, sat=saturated_fat, chol=cholesterol, pro=protein, cal=calcium, sod=sodium)
+    return consume_food(per, kal=kal1, car=carbohydrates, sug=sugars, fat=fat, trans=trans_fat, sat=saturated_fat, chol=cholesterol, pro=protein, cal=calcium, sod=sodium)
   
 # 숫자 +글자에서 숫자만 출력함
 def make_num(text):
@@ -681,7 +680,7 @@ for key_2, val_2 in result.items():
             if len(lst_2) == 1: 
                 lst_2.append('0')
             if lst_2[0] == 'g': 
-                print('g',lst_2[0]) 
+                #print('g',lst_2[0]) 
                 lst_2[0] = '0g'   #'0g'인데 'g'으로만 인식이 되어 '0g'으로 전처리
             if len(lst_2) == 0:
                 lst_2.append('0','0')
@@ -723,13 +722,13 @@ calc=700-calcium, sodi=2000-sodium, kal = cal_nut(user_age, user_gender)-kcal, d
 # print(person.Kcal, person.carbo, person.sugars, person.fats, person.trans_fats, person.saturated_fats, person.cholesterol, person.protein, person.calcium, person.sodium)
 
 calorieType = 0 if calorieType == 'total' else 1
-# print(productName, calories, calorieType)
+totalAmount = 1 if calorieType == 0 else amount
+# print(calorieType, totalAmount)
 
 
 # 수정된점 con_df(데이터,사람, case, max) case max추가 
 # case 는 총량으로 나와있으면 0 100그람당이면 1로 입력 
 # max1은 총량으로 나와있으면 1입력 100그람당으로 나와있으면 g수의 총량 ex) 780g이면 780으로 입력
 
-total = "g" # g수 받기
 # 결과 값 전송
-con_df(img_df, person, calorieType, 1)
+con_df(img_df, person, calorieType, totalAmount, calories)

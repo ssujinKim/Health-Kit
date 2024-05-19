@@ -1,12 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, ActivityIndicator, Image, Alert, TouchableOpacity,} from 'react-native';
 import axios from 'axios';
 
 export default function Recommendresult({navigation, route}) {
@@ -36,28 +29,47 @@ export default function Recommendresult({navigation, route}) {
     });
 
     axios
-      .get(
-        `http://10.50.213.228:3000/run-python-dr?email=${email}&date=${todayDate}&preferences=${preferences}`
-      )
-      .then((response) => {
-        console.log(response.data);
-        let data;
-        try {
+    .get(`http://192.168.0.11:3000/run-python-dr?email=${email}&date=${todayDate}&preferences=${preferences}`)
+    .then((response) => {
+      if (!response.data) {
+        console.error('No data received from server');
+        setLoading(false);
+        return;
+      }
+      console.log(response.data);
+      let data;
+      try {
+        // response.data가 문자열인지 확인
+        if (typeof response.data === 'string') {
           // 서버에서 받은 데이터의 작은따옴표를 큰따옴표로 변환
           const correctedData = response.data.replace(/'/g, '"');
           data = JSON.parse(correctedData);
-        } catch (error) {
-          console.error('Error parsing JSON:', error);
-          setLoading(false);
-          return;
+        } else {
+          data = response.data;
+          Alert.alert(
+            "알림",
+            "선택하신 식단 유형에 해당하는 추천 식품이 없습니다.",
+            [
+              {
+                text: "확인",
+                onPress: () => navigation.navigate('DietrecommendPage', {email: email}), // 확인 버튼 누르면 뒤로가기
+              }
+            ],
+            { cancelable: false } // 사용자가 Alert 외부를 탭하거나 뒤로 가기 버튼을 눌러 Alert를 취소할 수 없도록 함
+          );
         }
-        setPythonData(data);
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      });
+        return;
+      }
+      setPythonData(data);
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+      setLoading(false);
+    });
   }, []);
 
   if (loading) {

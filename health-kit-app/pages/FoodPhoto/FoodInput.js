@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Modal, View, Pressable, Text, TextInput, TouchableOpacity} from 'react-native';
+import {StyleSheet, Modal, View, Pressable, Text, TextInput, TouchableOpacity, Alert} from 'react-native';
 import UploadMode from './UploadMode';
 
 export default function FoodInput({visible, onClose, navigation, email}) {
   const [productName, setProductName] = useState('');
+  const [amount, setAmount] = useState('');
   const [calories, setCalories] = useState('');
   const [calorieType, setCalorieType] = useState('total');
 
@@ -11,6 +12,7 @@ export default function FoodInput({visible, onClose, navigation, email}) {
   useEffect(() => {
     if (visible) {
       setProductName('');
+      setAmount('');
       setCalories('');
       setCalorieType('total');
     }
@@ -24,7 +26,10 @@ export default function FoodInput({visible, onClose, navigation, email}) {
   const [modalVisible, setModalVisible] = useState(false); // UploadMode 모달 상태 관리
 
   const handleOpenUploadMode = () => {
-    console.log(productName, calories, calorieType);
+    if (!productName || !amount || !calories) {
+      Alert.alert('알림', '식품명과 총량, 칼로리를 모두 입력해주세요.');
+      return;
+    }
     setModalVisible(true); // UploadMode 모달 열기
     onClose(); // FoodInput 모달 닫기
   };
@@ -35,12 +40,17 @@ export default function FoodInput({visible, onClose, navigation, email}) {
         <Pressable style={styles.background} onPress={onClose}>
           <View style={styles.whiteBox} onStartShouldSetResponder={() => true}>
             <Text style={styles.modalText}>식품명</Text>
-            <TextInput style={styles.foodinput} />
+            <TextInput 
+              style={styles.foodinput} 
+              value={productName}
+              onChangeText={setProductName}
+            />
             <Text style={styles.modalText}>총내용량</Text>
             <TextInput
               style={styles.totalinput}
-              value={productName}
-              onChangeText={setProductName}
+              value={amount}
+              keyboardType="numeric"
+              onChangeText={setAmount}
             />
             <Text style={styles.modalText}>칼로리</Text>
             <View style={{flexDirection: 'row'}}>
@@ -87,6 +97,7 @@ export default function FoodInput({visible, onClose, navigation, email}) {
         navigation={navigation}
         email={email}
         productName={productName}
+        amount={amount}
         calories={calories}
         calorieType={calorieType}
       />

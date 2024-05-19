@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 
 export default function DietRecommend({navigation, route}) {
   const {email} = route.params;
@@ -47,6 +47,11 @@ export default function DietRecommend({navigation, route}) {
     const filteredPreferences = Object.entries(preferences)
       .filter(([key, value]) => value === true)
       .map(([key, value]) => key);
+
+    if (filteredPreferences.length === 0) {
+      Alert.alert('경고', '최소 하나의 식단 유형을 선택해주세요.');
+      return;
+    }
 
     navigation.navigate('RecommendresultPage', {email: email, preferences: filteredPreferences});
   };
@@ -167,7 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
-    backgroundColor: '#f6f6f6',
+    backgroundColor: 'white',
     borderWidth: 1,
     borderColor: 'lightgray',
     borderRadius: 50,
