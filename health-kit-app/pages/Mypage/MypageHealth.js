@@ -140,6 +140,7 @@ export default function MypageHealth({navigation, route}) {
         medicine3: mSearchTexts[2],
       };
       console.log(mSearchTexts[0]);
+
       await axios.post('http://192.168.0.11:3000/updateUserInfo', updatedUserInfo);
       console.log('건강 정보가 성공적으로 업데이트되었습니다.');
       Alert.alert('완료', '건강 정보가 성공적으로 업데이트되었습니다.', [
@@ -321,6 +322,7 @@ export default function MypageHealth({navigation, route}) {
               {mRenderSearchBox(index)}
             </View>
           ))}
+          
           <View style={styles.continue}>
             <TouchableOpacity style={styles.continueButton} onPress={handleComplete}>
               <Text style={styles.continuebuttonText}>완료하기</Text>
