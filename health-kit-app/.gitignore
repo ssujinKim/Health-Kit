@@ -41,6 +41,5 @@ lib/
 # package
 yarn.lock
 
-myvenv
-
-model
+myvenv/
+model/
