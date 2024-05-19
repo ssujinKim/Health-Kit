@@ -35,7 +35,7 @@ export default function Nickname({navigation, route}) {
       return; // 닉네임이 비어있으면 여기서 처리를 멈춥니다.
     }
     axios
-      .post('http://192.168.35.243:3000/checkNickname', {nickname})
+      .post('http://10.50.213.228:3000/checkNickname', {nickname})
       .then((response) => {
         if (response.data.isAvailable) {
           console.log('사용할 수 있는 닉네임입니다.');
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'white',
   },
   content: {
     position: 'absolute',
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     width: '60%',
   },
   overlapButton: {
-    backgroundColor: 'green',
+    backgroundColor: '#47c83e',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -138,14 +139,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   continueButton: {
-    backgroundColor: 'green',
-    paddingVertical: 15,
-    paddingHorizontal: 120,
+    backgroundColor: '#47c83e',
+    paddingVertical: 10,
+    paddingHorizontal: 130,
     borderRadius: 5,
   },
   continuebuttonText: {
-    fontSize: 32,
+    fontSize: 30,
     color: 'black',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 });

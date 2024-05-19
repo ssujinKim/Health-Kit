@@ -26,7 +26,7 @@ export default function Health({navigation, route}) {
 
   const fetchSearchDisease = async (searchText, index) => {
     try {
-      const response = await axios.post('http://10.50.249.191:3000/searchDisease', {searchText});
+      const response = await axios.post('http://10.50.213.228:3000/searchDisease', {searchText});
       if (response.data.success) {
         dSetSearchResults((prevResults) =>
           prevResults.map((result, idx) => (idx === index ? response.data.data : result))
@@ -98,7 +98,7 @@ export default function Health({navigation, route}) {
 
     // 사용자 정보 불러오기
     const fetchUserInfo = () => {
-      const url = `http://10.50.249.191:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://10.50.213.228:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -140,7 +140,7 @@ export default function Health({navigation, route}) {
         medicine3: mSearchTexts[2],
       };
       console.log(mSearchTexts[0]);
-      await axios.post('http://10.50.249.191:3000/updateUserInfo', updatedUserInfo);
+      await axios.post('http://10.50.213.228:3000/updateUserInfo', updatedUserInfo);
       console.log('건강 정보가 성공적으로 업데이트되었습니다.');
       Alert.alert('완료', '건강 정보가 성공적으로 업데이트되었습니다.', [
         {text: '확인', onPress: () => navigation.navigate('Mypage', {email: email})},
@@ -155,11 +155,11 @@ export default function Health({navigation, route}) {
   const dRenderSearchBox = (index) => (
     <View>
       <View style={styles.searchBox}>
-        <Ionicons name="search" size={28} color="gray" style={{marginLeft: 15}} />
+        <Ionicons name="search" size={24} color="gray" style={{marginLeft: 15}} />
         <TextInput
           style={{
             marginLeft: 10,
-            fontSize: 22,
+            fontSize: 16,
             color: dSearchTexts[index] ? 'black' : 'lightgray',
             flex: 1,
           }}
@@ -196,11 +196,11 @@ export default function Health({navigation, route}) {
   const mRenderSearchBox = (index) => (
     <View>
       <View style={styles.searchBox}>
-        <Ionicons name="search" size={28} color="gray" style={{marginLeft: 15}} />
+        <Ionicons name="search" size={24} color="gray" style={{marginLeft: 15}} />
         <TextInput
           style={{
             marginLeft: 10,
-            fontSize: 22,
+            fontSize: 16,
             color: mSearchTexts[index] ? 'black' : 'lightgray',
             flex: 1,
           }}
@@ -394,7 +394,6 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
   },
-
   horizontalLine1: {
     position: 'absolute',
     top: 325,
@@ -403,7 +402,6 @@ const styles = StyleSheet.create({
     width: '95%',
     alignSelf: 'center',
   },
-
   horizontalLine2: {
     position: 'absolute',
     top: 655, // 이메일 텍스트 아래에 위치하도록 설정
@@ -421,13 +419,14 @@ const styles = StyleSheet.create({
   searchBox: {
     alignItems: 'center',
     flexDirection: 'row',
-    width: '90%',
-    height: 55,
+    width: '50%',
+    height: 45,
     backgroundColor: 'white',
     marginHorizontal: 10,
     borderRadius: 15,
     borderColor: 'lightgray',
     borderWidth: 1,
+    marginBottom: 10,
   },
   addContent: {
     width: '90%',

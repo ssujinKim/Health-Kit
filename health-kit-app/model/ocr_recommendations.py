@@ -91,14 +91,14 @@ sodium = round(safe_float(diet_info_item.get('totalSodium', 0)), 2)
 print(Kcal, carbo, sugars, fats, trans_fats, saturated_fats, cholesterol, protein, calcium, sodium)
 print(productName, calories, calorieType)
 
-file_path = 'C:/Users/kkuu2/Downloads/food_data.csv'
+file_path = 'C:/Users/mkk08/Downloads/food_data.csv'
 df = pd.read_csv(file_path, encoding='utf-8')
 df.fillna(0, inplace=True)
-file_path2 = 'C:/Users/kkuu2/Downloads/질병.csv'
+file_path2 = 'C:/Users/mkk08/Downloads/질병.csv'
 dis = pd.read_csv(file_path2, encoding='utf-8')
-file_path3 = 'C:/Users/kkuu2/Downloads/modified_merged_data.csv'
+file_path3 = 'C:/Users/mkk08/Downloads/modified_merged_data.csv'
 med = pd.read_csv(file_path3, encoding='utf-8')
-file_path4 = 'C:/Users/kkuu2/Downloads/정렬데이터.csv'
+file_path4 = 'C:/Users/mkk08/Downloads/정렬데이터.csv'
 sor = pd.read_csv(file_path4, encoding='utf-8')
 
 pd.set_option('display.max_columns', None)

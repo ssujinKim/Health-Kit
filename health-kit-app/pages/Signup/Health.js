@@ -44,7 +44,7 @@ export default function Health({navigation, route}) {
     // 모든 필수 입력 필드가 채워졌다면, 회원가입 절차 진행
     const updateUser = {...user, age, height, weight, gender};
     axios
-      .post('http://192.168.35.243:3000/signUp', updateUser)
+      .post('http://10.50.213.228:3000/signUp', updateUser)
       .then((res) => {
         console.log(res.data);
         // 회원가입 성공 후 할 일
@@ -141,6 +141,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'white',
+
   },
   content: {
     position: 'absolute',
@@ -162,7 +164,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 60,
     marginBottom: 20,
-    zIndex: 1, // 다른 요소 위에 표시되도록 설정
   },
   textStyle: {
     fontSize: 20,
@@ -171,40 +172,14 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     fontSize: 18,
-    width: '55%',
+    width: '65%',
     borderBottomWidth: 1,
     borderBottomColor: 'black',
-    right: 0,
-  },
-  continue: {
-    position: 'absolute',
-    bottom: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-  },
-  continueButton: {
-    backgroundColor: 'green',
-    paddingVertical: 15,
-    paddingHorizontal: 120,
-    borderRadius: 5,
-  },
-  continuebuttonText: {
-    fontSize: 32,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  dropdownContainer: {
-    width: '55%',
-  },
-  dropdown: {
-    width: '100%',
   },
   radioButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    marginRight: 0,
+    marginRight: 20,
   },
   radioButtonCircle: {
     width: 20,
@@ -223,6 +198,24 @@ const styles = StyleSheet.create({
   },
   radioButtonText: {
     fontSize: 16,
-    left: 7,
+    left: 10,
+  },
+  continue: {
+    position: 'absolute',
+    bottom: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  continueButton: {
+    backgroundColor: '#47c83e',
+    paddingVertical: 10,
+    paddingHorizontal: 130,
+    borderRadius: 5,
+  },
+  continuebuttonText: {
+    fontSize: 30,
+    color: 'black',
+    fontWeight: '500',
   },
 });

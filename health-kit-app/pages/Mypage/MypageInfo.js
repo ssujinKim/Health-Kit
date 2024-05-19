@@ -25,7 +25,7 @@ export default function Mypageinfo({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://10.50.249.191:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://10.50.213.228:3000/userInfo?email=${encodeURIComponent(email)}`;
       axios
         .get(url)
         .then((response) => {
@@ -79,6 +79,7 @@ export default function Mypageinfo({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   nameemailContent: {
     top: 50,

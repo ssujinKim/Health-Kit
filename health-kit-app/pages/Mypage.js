@@ -45,7 +45,7 @@ export default function Mypage({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://10.50.249.191:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://10.50.213.228:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -75,7 +75,7 @@ export default function Mypage({navigation, route}) {
   }, [userInfo]);
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.myinformationContent}>
         <TouchableOpacity
           style={styles.nameicon}
@@ -113,13 +113,20 @@ export default function Mypage({navigation, route}) {
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>질병</Text>
           <Text style={styles.statusOutput}>
-            {disease1} {disease2} {disease3}
+            {disease1}
+            {'\n'}
+            {disease2}
+            {'\n'}
+            {disease3}
           </Text>
         </View>
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>복용중인 약</Text>
           <Text style={styles.statusOutput}>
-            {medicine1} {medicine2} {medicine3}
+            {medicine1}
+            {'\n'}
+            {medicine2}
+            {'\n'} {medicine3}
           </Text>
         </View>
       </View>
@@ -128,7 +135,7 @@ export default function Mypage({navigation, route}) {
         <Ionicons name="chatbubbles" size={28} color="black" />
         <Text style={styles.info}>진행중인 상담</Text>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -205,6 +212,7 @@ const styles = StyleSheet.create({
     right: 0,
     fontSize: 20,
     marginBottom: 40,
+
     width: '45%',
   },
   adviceContent: {

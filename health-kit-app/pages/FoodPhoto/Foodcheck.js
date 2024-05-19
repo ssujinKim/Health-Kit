@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, ActivityIndicator, StyleSheet, ScrollView, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import axios from 'axios';
 
 export default function Foodcheck({navigation, route}) {
@@ -28,8 +36,11 @@ export default function Foodcheck({navigation, route}) {
     });
 
     console.log(email);
-    axios.get(`http://10.50.249.191:3000/run-python-ocr?email=${email}&date=${todayDate}
-               &productName=${productName}&calories=${calories}&calorieType=${calorieType}`)
+    axios
+      .get(
+        `http://10.50.213.228:3000/run-python-ocr?email=${email}&date=${todayDate}
+               &productName=${productName}&calories=${calories}&calorieType=${calorieType}`
+      )
       .then((response) => {
         console.log(response.data);
         setPythonData(response.data);
@@ -54,13 +65,13 @@ export default function Foodcheck({navigation, route}) {
     <View style={styles.container}>
       <ScrollView style={styles.scrollviewContainer}>
         <View style={styles.foodPictureContainer}>
-          <Image 
+          <Image
             /*source={{ uri: pythonData.imageUrl }} */
-            source={require('../../ocr/to/photo.jpg')} 
-            style={styles.foodPicture} 
+            source={require('../../ocr/to/photo.jpg')}
+            style={styles.foodPicture}
             resizeMode="contain"
           />
-            <Text style={styles.foodText}>{pythonData}</Text>
+          <Text style={styles.foodText}>{pythonData}</Text>
         </View>
       </ScrollView>
 
@@ -82,6 +93,7 @@ export default function Foodcheck({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   scrollviewContainer: {
     flex: 1,
