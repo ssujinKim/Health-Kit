@@ -8,15 +8,22 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 
 export default function Menuadd({navigation, route}) {
   const {email, mealType} = route.params;
   const [food, setFood] = useState('');
-  const [carbs, setCarbs] = useState('');
-  const [protein, setProtein] = useState('');
-  const [fat, setFat] = useState('');
+  const [carbs, setCarbs] = useState(''); // 탄수화물
+  const [sugars, setSugars] = useState(''); // 당류
+  const [fat, setFat] = useState(''); // 지방
+  const [transfat, setTransfat] = useState(''); // 트랜스지방산
+  const [saturatedfat, setSaturatedfat] = useState(''); // 포화지방산
+  const [choles, setCholes] = useState(''); // 콜레스테롤
+  const [protein, setProtein] = useState(''); // 단백질
+  const [calcium, setCalcium] = useState(''); // 칼슘
+  const [sodium, setSodium] = useState(''); // 나트륨
   const [calories, setCalories] = useState('');
 
   useEffect(() => {
@@ -43,12 +50,18 @@ export default function Menuadd({navigation, route}) {
     try {
       console.log(route.params);
       const todayDate = getFormattedDate(); // 오늘 날짜를 구함
-      const response = await axios.post('http://10.50.249.191:3000/menuAdd', {
+      const response = await axios.post('http://10.50.213.228:3000/menuAdd', {
         email: email,
         food: food,
-        carbs: carbs,
-        protein: protein,
-        fat: fat,
+        carbs: carbs, // 탄수화물
+        sugars: sugars, // 당류
+        fat: fat, // 지방
+        transfat: transfat, // 트랜스지방산
+        saturatedfat: saturatedfat, // 포화지방산
+        choles: choles, // 콜레스테롤
+        protein: protein, // 단백질
+        calcium: calcium, // 칼슘
+        sodium: sodium, // 나트륨
         calories: calories,
         date: todayDate,
         meal_type: mealType,
@@ -63,71 +76,127 @@ export default function Menuadd({navigation, route}) {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textStyle}>음식</Text>
-              <TextInput
-                style={styles.input}
-                underlineColorAndroid="transparent"
-                onChangeText={(text) => setFood(text)}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textStyle}>탄수화물(g)</Text>
-              <TextInput
-                style={styles.input}
-                underlineColorAndroid="transparent"
-                onChangeText={(text) => setCarbs(text)}
-                keyboardType="numeric"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textStyle}>단백질(g)</Text>
-              <TextInput
-                style={styles.input}
-                underlineColorAndroid="transparent"
-                onChangeText={(text) => setProtein(text)}
-                keyboardType="numeric"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textStyle}>지방(g)</Text>
-              <TextInput
-                style={styles.input}
-                underlineColorAndroid="transparent"
-                onChangeText={(text) => setFat(text)}
-                keyboardType="numeric"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textStyle}>칼로리(kcal)</Text>
-              <TextInput
-                style={styles.input}
-                underlineColorAndroid="transparent"
-                onChangeText={(text) => setCalories(text)}
-                keyboardType="numeric"
-              />
+    <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <ScrollView contentContainerStyle={[styles.scrollViewContent, {paddingBottom: 1200}]}>
+          <View style={styles.content}>
+            <View style={styles.form}>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>음식명</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setFood(text)}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>탄수화물(g)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setCarbs(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>당류(g)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setSugars(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>지방(g)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setFat(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>트랜스지방산(g)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setTransfat(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>포화지방산(g)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setSaturatedfat(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>콜레스테롤(mg)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setCholes(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>단백질(g)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setProtein(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>칼슘(mg)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setCalcium(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>나트륨(mg)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setSodium(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>칼로리(kcal)</Text>
+                <TextInput
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(text) => setCalories(text)}
+                  keyboardType="numeric"
+                />
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.continue}>
-          <TouchableOpacity style={styles.continueButton} onPress={submitData}>
-            <Text style={styles.continuebuttonText}>완료하기</Text>
-          </TouchableOpacity>
-        </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+      <View style={styles.continue}>
+        <TouchableOpacity style={styles.continueButton} onPress={submitData}>
+          <Text style={styles.continuebuttonText}>완료하기</Text>
+        </TouchableOpacity>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: 'white',
   },
   content: {
     position: 'absolute',
@@ -166,14 +235,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   continueButton: {
-    backgroundColor: 'green',
-    paddingVertical: 15,
-    paddingHorizontal: 120,
+    backgroundColor: '#47c83e',
+    paddingVertical: 10,
+    paddingHorizontal: 130,
     borderRadius: 5,
   },
   continuebuttonText: {
-    fontSize: 32,
+    fontSize: 30,
     color: 'black',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 });

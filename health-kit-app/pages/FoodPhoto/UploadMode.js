@@ -62,7 +62,7 @@ function UploadMode({visible, onClose, email, productName, calories, calorieType
     });
 
     try {
-      const response = await axios.post('http://10.50.249.191:3000/imageUpload', formData, {
+      const response = await axios.post('http://10.50.213.228:3000/imageUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -70,7 +70,12 @@ function UploadMode({visible, onClose, email, productName, calories, calorieType
 
       console.log('성공');
       console.log(response.data);
-      navigation.navigate('FoodcheckPage', {email: email, productName: productName, calories: calories, calorieType: calorieType});
+      navigation.navigate('FoodcheckPage', {
+        email: email,
+        productName: productName,
+        calories: calories,
+        calorieType: calorieType,
+      });
     } catch (error) {
       console.log('실패');
       console.log(error);

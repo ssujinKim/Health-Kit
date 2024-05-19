@@ -15,7 +15,7 @@ export default function FoodInput({visible, onClose, navigation, email}) {
       setCalorieType('total');
     }
   }, [visible]);
-  
+
   // 체크박스 선택 핸들러
   const handleCheckboxChange = (type) => {
     setCalorieType(type);
@@ -35,7 +35,13 @@ export default function FoodInput({visible, onClose, navigation, email}) {
         <Pressable style={styles.background} onPress={onClose}>
           <View style={styles.whiteBox} onStartShouldSetResponder={() => true}>
             <Text style={styles.modalText}>식품명</Text>
-            <TextInput style={styles.foodinput} value={productName} onChangeText={setProductName} />
+            <TextInput style={styles.foodinput} />
+            <Text style={styles.modalText}>총내용량</Text>
+            <TextInput
+              style={styles.totalinput}
+              value={productName}
+              onChangeText={setProductName}
+            />
             <Text style={styles.modalText}>칼로리</Text>
             <View style={{flexDirection: 'row'}}>
               <TextInput
@@ -116,6 +122,14 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 4,
   },
+  totalinput: {
+    height: 40,
+    marginBottom: 20,
+    borderWidth: 1,
+    padding: 10,
+    borderColor: '#ddd',
+    borderRadius: 4,
+  },
   kcalinput: {
     height: 40,
     width: '64%',
@@ -150,7 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   submitButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#47c83e',
     borderRadius: 4,
     padding: 10,
     alignItems: 'center',

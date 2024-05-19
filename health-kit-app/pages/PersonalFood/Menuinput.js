@@ -67,7 +67,7 @@ export default function Menuinput({navigation, route}) {
     const fetchTotalInfo = async () => {
       if (!date) return; // date가 비어있는 경우 함수 실행 중지
 
-      const url = `http://10.50.249.191:3000/totalInfo?email=${encodeURIComponent(
+      const url = `http://10.50.213.228:3000/totalInfo?email=${encodeURIComponent(
         email
       )}&date=${encodeURIComponent(date)}`;
 
@@ -88,7 +88,7 @@ export default function Menuinput({navigation, route}) {
     };
 
     const fetchMealInfo = async () => {
-      const url = `http://10.50.249.191:3000/mealInfo?email=${email}&date=${encodeURIComponent(
+      const url = `http://10.50.213.228:3000/mealInfo?email=${email}&date=${encodeURIComponent(
         date
       )}`;
 
@@ -172,7 +172,7 @@ export default function Menuinput({navigation, route}) {
 
   // const deleteMeal = async (food_name, mealType) => {
   //   try {
-  //     await axios.post(`http://10.50.249.191:3000/deleteMeal?email=${email}&date=${(date)}&food_name=${(food_name)}&meal_type=${(mealType)}`);
+  //     await axios.post(`http://10.50.213.228:3000/deleteMeal?email=${email}&date=${(date)}&food_name=${(food_name)}&meal_type=${(mealType)}`);
   //     console.log('음식 삭제 완료');
   //     Alert.alert('완료', '음식 정보가 삭제되었습니다.', { text: '확인' });
 
@@ -196,7 +196,7 @@ export default function Menuinput({navigation, route}) {
           onPress: async () => {
             try {
               await axios.post(
-                `http://10.50.249.191:3000/deleteMeal?email=${email}&date=${date}&food_name=${food_name}&meal_type=${mealType}`
+                `http://10.50.213.228:3000/deleteMeal?email=${email}&date=${date}&food_name=${food_name}&meal_type=${mealType}`
               );
               console.log('음식 삭제 완료');
               Alert.alert('완료', '음식 정보가 삭제되었습니다.', {text: '확인'});
@@ -234,6 +234,7 @@ export default function Menuinput({navigation, route}) {
               textMonthFontSize: 20,
               textMonthFontWeight: 'bold',
               textSectionTitleColor: 'rgba(138, 138, 138, 1)',
+              todayTextColor: '#47c83e',
               arrowColor: 'gray',
             }}
             hideExtraDays={true}
@@ -246,19 +247,19 @@ export default function Menuinput({navigation, route}) {
         <View style={styles.nutritionContent}>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={styles.nutritionText}>탄수화물</Text>
-            <Text style={styles.nutritionText}>{totalCarbs}</Text>
+            <Text style={styles.nutritionNum}>{totalCarbs}</Text>
           </View>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={styles.nutritionText}>단백질</Text>
-            <Text style={styles.nutritionText}>{totalProtein}</Text>
+            <Text style={styles.nutritionNum}>{totalProtein}</Text>
           </View>
           <View style={{alignItems: 'flex-start'}}>
             <Text style={styles.nutritionText}>지방</Text>
-            <Text style={styles.nutritionText}>{totalFat}</Text>
+            <Text style={styles.nutritionNum}>{totalFat}</Text>
           </View>
           <View style={{alignItems: 'flex-start'}}>
-            <Text style={styles.nutritionText}>총 칼로리</Text>
-            <Text style={styles.nutritionText}>{totalCalories} kcal</Text>
+            <Text style={styles.nutritionText}>칼로리</Text>
+            <Text style={styles.nutritionNum}>{totalCalories}kcal</Text>
           </View>
         </View>
       </View>
@@ -468,7 +469,7 @@ export default function Menuinput({navigation, route}) {
             navigation.navigate('DietrecommendPage', {email: email});
           }}
         >
-          <View style={styles.foodBox}>
+          <View style={[styles.foodBox, {backgroundColor: '#b7f0b1'}]}>
             <Text style={styles.foodText}>식단 추천 받기</Text>
             <Ionicons name="add" size={32} color="gray" style={styles.icon} />
           </View>
@@ -481,6 +482,7 @@ export default function Menuinput({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   dateContainer: {
     flexDirection: 'row',
@@ -527,6 +529,10 @@ const styles = StyleSheet.create({
   },
   nutritionText: {
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  nutritionNum: {
+    fontSize: 16,
     fontWeight: 'bold',
   },
   foodContainer: {
