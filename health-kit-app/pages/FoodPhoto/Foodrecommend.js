@@ -102,14 +102,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   continueButton: {
-    backgroundColor: 'green',
-    paddingVertical: 15,
-    paddingHorizontal: 120,
+    backgroundColor: '#47c83e',
+    paddingVertical: 10,
+    paddingHorizontal: 130,
     borderRadius: 5,
   },
   continuebuttonText: {
-    fontSize: 32,
+    fontSize: 30,
     color: 'black',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 });

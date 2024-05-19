@@ -17,11 +17,22 @@ export default function Mypage({navigation, route}) {
     disease3: '',
     medicine1: '',
     medicine2: '',
-    medicine3: ''
+    medicine3: '',
   });
 
   // userInfo에서 각 필드를 추출
-  const {nickname, height, weight, age, disease1, disease2, disease3, medicine1, medicine2, medicine3} = userInfo;
+  const {
+    nickname,
+    height,
+    weight,
+    age,
+    disease1,
+    disease2,
+    disease3,
+    medicine1,
+    medicine2,
+    medicine3,
+  } = userInfo;
 
   useEffect(() => {
     navigation.setOptions({
@@ -34,7 +45,7 @@ export default function Mypage({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://10.50.249.191:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://10.50.213.228:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -51,7 +62,7 @@ export default function Mypage({navigation, route}) {
             disease3: data.disease3,
             medicine1: data.medicine1,
             medicine2: data.medicine2,
-            medicine3: data.medicine3
+            medicine3: data.medicine3,
           });
         })
         .catch((error) => {
@@ -102,13 +113,21 @@ export default function Mypage({navigation, route}) {
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>질병</Text>
           <Text style={styles.statusOutput}>
-            {disease1} {disease2} {disease3}
+            {disease1}
+            {'\n'}
+            {disease2}
+            {'\n'}
+            {disease3}
           </Text>
         </View>
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>복용중인 약</Text>
           <Text style={styles.statusOutput}>
-            {medicine1} {medicine2} {medicine3}
+            {medicine1}
+            {'\n'}
+            {medicine2}
+            {'\n'}
+            {medicine3}
           </Text>
         </View>
       </View>
@@ -124,6 +143,7 @@ export default function Mypage({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   myinformationContent: {
     position: 'absolute',
@@ -162,7 +182,7 @@ const styles = StyleSheet.create({
   diseaseContent: {
     position: 'absolute',
     top: 140,
-    left: 20,
+    left: 15,
     flexDirection: 'row',
     width: '100%',
   },
@@ -199,7 +219,7 @@ const styles = StyleSheet.create({
   adviceContent: {
     position: 'absolute',
     top: 530,
-    left: 20,
+    left: 15,
     flexDirection: 'row',
   },
 });
