@@ -15,7 +15,7 @@ export default function Menusearch({navigation, route}) {
   // 검색 텍스트가 변경될 때마다 실행되는 함수
   const fetchSearchResults = async (searchText) => {
     try {
-      const response = await axios.post('http://10.50.213.228:3000/searchFood', {searchText});
+      const response = await axios.post('http://192.168.0.11:3000/searchFood', {searchText});
       if (response.data.success) {
         setSearchResults(response.data.data);
       } else {
@@ -58,7 +58,7 @@ export default function Menusearch({navigation, route}) {
     try {
       console.log(route.params);
       const todayDate = getFormattedDate(); // 오늘 날짜를 구함
-      const response = await axios.post('http://10.50.213.228:3000/menuSearchAdd', {
+      const response = await axios.post('http://192.168.0.11:3000/menuSearchAdd', {
         email: email,
         food: selectedItem.food_name, // 여기를 수정
         date: todayDate,

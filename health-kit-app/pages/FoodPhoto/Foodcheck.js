@@ -11,7 +11,7 @@ import {
 import axios from 'axios';
 
 export default function Foodcheck({navigation, route}) {
-  const {email, productName, calories, calorieType} = route.params;
+  const {email, productName, amount, calories, calorieType} = route.params;
   const [loading, setLoading] = useState(true);
   const [pythonData, setPythonData] = useState('');
 
@@ -35,11 +35,10 @@ export default function Foodcheck({navigation, route}) {
       headerTintColor: 'black',
     });
 
-    console.log(email);
     axios
       .get(
-        `http://10.50.213.228:3000/run-python-ocr?email=${email}&date=${todayDate}
-               &productName=${productName}&calories=${calories}&calorieType=${calorieType}`
+        `http://192.168.0.11:3000/run-python-ocr?email=${email}&date=${todayDate}
+               &productName=${productName}&amount=${amount}&calories=${calories}&calorieType=${calorieType}`
       )
       .then((response) => {
         console.log(response.data);
@@ -63,28 +62,47 @@ export default function Foodcheck({navigation, route}) {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollviewContainer}>
+      <ScrollView>
         <View style={styles.foodPictureContainer}>
           <Image
-            /*source={{ uri: pythonData.imageUrl }} */
             source={require('../../ocr/to/photo.jpg')}
             style={styles.foodPicture}
             resizeMode="contain"
           />
           <Text style={styles.foodText}>{pythonData}</Text>
         </View>
-      </ScrollView>
+        </ScrollView>
 
-      {/* 섭취 불가능한 식품일때만 보여지는 버튼 */}
       <View style={styles.recommend}>
+      {/* 조건부 렌더링을 위한 코드 부분 */}
+        {pythonData.trim() === '섭취 가능한 품목입니다.' ? (
         <TouchableOpacity
           style={styles.recommendButton}
           onPress={() => {
-            navigation.navigate('FoodrecommendPage');
+            navigation.navigate('MainPage', {email: email});
+          }}
+        >
+          <Text style={styles.recommendbuttonText}>완료하기</Text>
+        </TouchableOpacity>
+        ) : null}
+
+        {pythonData.trim() === '일일 영양섭취 초과입니다.' ? (
+        <TouchableOpacity
+          style={styles.recommendButton1}
+          onPress={() => {
+            navigation.navigate('FoodrecommendPage', {
+              email: email,
+              todayDate: todayDate,
+              productName: productName, 
+              amount: amount, 
+              calories: calories, 
+              calorieType: calorieType
+            });
           }}
         >
           <Text style={styles.recommendbuttonText}>비슷한 식품 추천 받기</Text>
         </TouchableOpacity>
+        ) : null}
       </View>
     </View>
   );
@@ -100,18 +118,19 @@ const styles = StyleSheet.create({
   },
   foodPictureContainer: {
     alignItems: 'center',
-    minHeight: 200, // 최소 높이 설정
-    width: '100%', // 화면 너비와 맞출 경우
+    minHeight: 400, // 이미지와 텍스트를 모두 포함할 수 있도록 높이 조정
+    width: '100%',
     top: 30,
   },
   foodPicture: {
-    width: '90%',
-    height: '120%',
+    width: '100%', // 화면 너비에 맞게 조정
+    height: 300, // 이미지가 더 크게 보이도록 높이 조정
+    resizeMode: 'contain', // 이미지가 컨테이너를 벗어나지 않도록 설정
     backgroundColor: 'black',
   },
   foodText: {
     fontSize: 20,
-    top: 20,
+    marginTop: 20, // 이미지 아래에 텍스트가 위치하도록 top 대신 marginTop 사용
     alignSelf: 'flex-start',
     marginLeft: 20,
     fontWeight: 'bold',
@@ -124,16 +143,21 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   recommendButton: {
-    backgroundColor: 'green',
-    paddingVertical: 13,
-    paddingHorizontal: 60,
+    backgroundColor: '#47c83e',
+    paddingVertical: 10,
+    paddingHorizontal: 130,
+    borderRadius: 5,
+  },
+  recommendButton1: {
+    backgroundColor: '#47c83e',
+    paddingVertical: 10,
+    paddingHorizontal: 70,
     borderRadius: 5,
   },
   recommendbuttonText: {
     fontSize: 30,
     color: 'black',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: '500',
   },
   loadingContainer: {
     flex: 1,

@@ -5,7 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
-function UploadMode({visible, onClose, email, productName, calories, calorieType}) {
+function UploadMode({visible, onClose, email, productName, amount, calories, calorieType}) {
   const navigation = useNavigation();
   const [image, setImage] = useState(null);
 
@@ -62,7 +62,7 @@ function UploadMode({visible, onClose, email, productName, calories, calorieType
     });
 
     try {
-      const response = await axios.post('http://10.50.213.228:3000/imageUpload', formData, {
+      const response = await axios.post('http://192.168.0.11:3000/imageUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -73,6 +73,7 @@ function UploadMode({visible, onClose, email, productName, calories, calorieType
       navigation.navigate('FoodcheckPage', {
         email: email,
         productName: productName,
+        amount: amount,
         calories: calories,
         calorieType: calorieType,
       });
