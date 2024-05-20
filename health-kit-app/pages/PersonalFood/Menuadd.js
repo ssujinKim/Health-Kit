@@ -172,7 +172,7 @@ export default function Menuadd({navigation, route}) {
                 />
               </View>
               <View style={styles.inputContainer}>
-                <Text style={styles.textStyle}>칼로리(kcal)</Text>
+                <Text style={styles.textStyle}>칼로리(Kcal)</Text>
                 <TextInput
                   style={styles.input}
                   underlineColorAndroid="transparent"

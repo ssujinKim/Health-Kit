@@ -12,7 +12,7 @@ export default function Main({navigation, route}) {
   return (
     <ScrollView style={styles.container}>
       <Image source={logo} style={styles.imageStyle} />
-      <View style={styles.iconContainer}>
+      {/* <View style={styles.iconContainer}>
         <Ionicons name="notifications" size={32} color="gray" style={styles.icon} />
         <TouchableOpacity
           onPress={() => {
@@ -21,7 +21,7 @@ export default function Main({navigation, route}) {
         >
           <Ionicons name="settings" size={32} color="gray" style={styles.icon} />
         </TouchableOpacity>
-      </View>
+      </View> */}
       <View style={styles.bodyContainer}>
         <View style={styles.photoBox}>
           <TouchableOpacity
@@ -62,11 +62,13 @@ export default function Main({navigation, route}) {
           <View style={styles.masterBox}>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('AdvicePage', {email: email});
+                navigation.navigate('Mypage', {email: email});
               }}
             >
-              <View style={styles.adviceBox}>
-                <Text style={styles.textBox}>상담하러 가기</Text>
+              {/* <View style={styles.adviceBox}> */}
+              <View style={styles.MypageBox}>
+                {/* <Text style={styles.textBox}>상담하러 가기</Text> */}
+                <Text style={styles.textBox}>마이페이지</Text>
                 <View style={styles.adviceiconContainer}>
                   <Ionicons name="person" size={48} color="#d6c5de" style={styles.personIcon} />
                   <MaterialCommunityIcons
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
   masterBox: {
     width: '47.5%',
   },
-  adviceBox: {
+  MypageBox: { // adviceBox
     height: 195,
     backgroundColor: 'white',
     marginHorizontal: 10,

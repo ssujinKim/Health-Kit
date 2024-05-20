@@ -119,8 +119,8 @@ export default function Menusearch({navigation, route}) {
             }}
           >
             <Text style={{fontSize: 18, fontWeight: '400'}}>{item.food_name}</Text>
-            <Text style={{fontSize: 12, marginTop: 5}}>
-              탄수화물: {item.carbs}g, 단백질: {item.protein}g, 지방: {item.fat}g, {item.kcal}kcal
+            <Text style={{fontSize: 12, marginTop: 5, color:'gray'}}>
+              100g 당 {item.kcal}Kcal, 탄수화물: {item.carbs}g, 단백질: {item.protein}g, 지방: {item.fat}g
             </Text>
           </View>
           <TouchableOpacity onPress={() => submitData(item)}>

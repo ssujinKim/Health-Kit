@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  ScrollView
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {useUser} from './UserContext';
@@ -70,67 +71,69 @@ export default function Health({navigation, route}) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.contentText}>본인의 정보를 입력해주세요</Text>
-          <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textStyle}>나이</Text>
-              <TextInput
-                value={age}
-                onChangeText={setAge}
-                keyboardType="numeric"
-                style={styles.input}
-                underlineColorAndroid="transparent"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textStyle}>키(cm)</Text>
-              <TextInput
-                value={height}
-                onChangeText={setHeight}
-                keyboardType="numeric"
-                style={styles.input}
-                underlineColorAndroid="transparent"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textStyle}>몸무게(kg)</Text>
-              <TextInput
-                value={weight}
-                onChangeText={setWeight}
-                keyboardType="numeric"
-                style={styles.input}
-                underlineColorAndroid="transparent"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textStyle}>성별</Text>
-              <TouchableOpacity
-                onPress={() => setGender('male')}
-                style={[styles.radioButton, gender === 'male' && styles.selectedRadioButton]}
-              >
-                <View style={styles.radioButtonCircle}>
-                  {gender === 'male' && <View style={styles.selectedRadioButtonCircle} />}
-                </View>
-                <Text style={styles.radioButtonText}>남자</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setGender('female')}
-                style={[styles.radioButton, gender === 'female' && styles.selectedRadioButton]}
-              >
-                <View style={styles.radioButtonCircle}>
-                  {gender === 'female' && <View style={styles.selectedRadioButtonCircle} />}
-                </View>
-                <Text style={styles.radioButtonText}>여자</Text>
-              </TouchableOpacity>
+        <ScrollView contentContainerStyle={{paddingBottom: 730}}>
+          <View style={styles.content}>
+            <Text style={styles.contentText}>본인의 정보를 입력해주세요</Text>
+            <View style={styles.form}>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>나이</Text>
+                <TextInput
+                  value={age}
+                  onChangeText={setAge}
+                  keyboardType="numeric"
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>키(cm)</Text>
+                <TextInput
+                  value={height}
+                  onChangeText={setHeight}
+                  keyboardType="numeric"
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>몸무게(kg)</Text>
+                <TextInput
+                  value={weight}
+                  onChangeText={setWeight}
+                  keyboardType="numeric"
+                  style={styles.input}
+                  underlineColorAndroid="transparent"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.textStyle}>성별</Text>
+                <TouchableOpacity
+                  onPress={() => setGender('male')}
+                  style={[styles.radioButton, gender === 'male' && styles.selectedRadioButton]}
+                >
+                  <View style={styles.radioButtonCircle}>
+                    {gender === 'male' && <View style={styles.selectedRadioButtonCircle} />}
+                  </View>
+                  <Text style={styles.radioButtonText}>남자</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setGender('female')}
+                  style={[styles.radioButton, gender === 'female' && styles.selectedRadioButton]}
+                >
+                  <View style={styles.radioButtonCircle}>
+                    {gender === 'female' && <View style={styles.selectedRadioButtonCircle} />}
+                  </View>
+                  <Text style={styles.radioButtonText}>여자</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.continue}>
-          <TouchableOpacity style={styles.continueButton} onPress={signUp}>
-            <Text style={styles.continuebuttonText}>완료하기</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.continue}>
+            <TouchableOpacity style={styles.continueButton} onPress={signUp}>
+              <Text style={styles.continuebuttonText}>완료하기</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -139,10 +142,7 @@ export default function Health({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'white',
-
   },
   content: {
     position: 'absolute',

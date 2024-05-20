@@ -237,7 +237,7 @@ export default function MypageHealth({navigation, route}) {
   return (
     <View style={styles.container}>
       <View style={{marginTop: 20}}>
-        <ScrollView contentContainerStyle={[styles.scrollViewContent, {paddingBottom: 130}]}>
+        <ScrollView contentContainerStyle={{paddingBottom: 130}}>
           <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 10}}>
             <Ionicons name={'checkmark'} size={24} style={styles.icon} />
             <Text style={styles.contentText}>기본 정보를 수정해주세요</Text>
@@ -425,14 +425,11 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: '500',
   },
-  searchContainer: {
-    marginLeft: 290,
-    width: '100%',
-  },
+
   searchBox: {
     alignItems: 'center',
     flexDirection: 'row',
-    width: '55%',
+    width: '85%',
     height: 45,
     backgroundColor: 'white',
     marginHorizontal: 10,
