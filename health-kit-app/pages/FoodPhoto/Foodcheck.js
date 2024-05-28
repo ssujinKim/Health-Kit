@@ -37,7 +37,7 @@ export default function Foodcheck({navigation, route}) {
 
     axios
       .get(
-        `http://192.168.0.11:3000/run-python-ocr?email=${email}&date=${todayDate}
+        `http://192.168.35.196:3000/run-python-ocr?email=${email}&date=${todayDate}
                &productName=${productName}&amount=${amount}&calories=${calories}&calorieType=${calorieType}`
       )
       .then((response) => {

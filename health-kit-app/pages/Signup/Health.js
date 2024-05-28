@@ -45,7 +45,7 @@ export default function Health({navigation, route}) {
     // 모든 필수 입력 필드가 채워졌다면, 회원가입 절차 진행
     const updateUser = {...user, age, height, weight, gender};
     axios
-      .post('http://192.168.0.11:3000/signUp', updateUser)
+      .post('http://192.168.35.196:3000/signUp', updateUser)
       .then((res) => {
         console.log(res.data);
         // 회원가입 성공 후 할 일

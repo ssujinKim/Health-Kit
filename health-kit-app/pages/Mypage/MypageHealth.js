@@ -26,7 +26,7 @@ export default function MypageHealth({navigation, route}) {
 
   const fetchSearchDisease = async (searchText, index) => {
     try {
-      const response = await axios.post('http://192.168.0.11:3000/searchDisease', {searchText});
+      const response = await axios.post('http://192.168.35.196:3000/searchDisease', {searchText});
       if (response.data.success) {
         dSetSearchResults((prevResults) =>
           prevResults.map((result, idx) => (idx === index ? response.data.data : result))
@@ -60,7 +60,7 @@ export default function MypageHealth({navigation, route}) {
 
   const fetchSearchMedicine = async (searchText, index) => {
     try {
-      const response = await axios.post('http://192.168.0.11:3000/searchMedicine', {searchText});
+      const response = await axios.post('http://192.168.35.196:3000/searchMedicine', {searchText});
       if (response.data.success) {
         mSetSearchResults((prevResults) =>
           prevResults.map((result, idx) => (idx === index ? response.data.data : result))
@@ -98,7 +98,7 @@ export default function MypageHealth({navigation, route}) {
 
     // 사용자 정보 불러오기
     const fetchUserInfo = () => {
-      const url = `http://192.168.0.11:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://192.168.35.196:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -141,7 +141,7 @@ export default function MypageHealth({navigation, route}) {
       };
       console.log(mSearchTexts[0]);
 
-      await axios.post('http://192.168.0.11:3000/updateUserInfo', updatedUserInfo);
+      await axios.post('http://192.168.35.196:3000/updateUserInfo', updatedUserInfo);
       console.log('건강 정보가 성공적으로 업데이트되었습니다.');
       Alert.alert('완료', '건강 정보가 성공적으로 업데이트되었습니다.', [
         {text: '확인', onPress: () => navigation.navigate('Mypage', {email: email})},

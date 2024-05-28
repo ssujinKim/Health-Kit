@@ -62,7 +62,7 @@ function UploadMode({visible, onClose, email, productName, amount, calories, cal
     });
 
     try {
-      const response = await axios.post('http://192.168.0.11:3000/imageUpload', formData, {
+      const response = await axios.post('http://192.168.35.196:3000/imageUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -503,43 +503,6 @@ def remake(df, kcal=2600, carbo=324, fats=54, sugar=100, trans_fats=100, sat_fat
                (sodium*mi <= df['나트륨(mg)']) & (df['나트륨(mg)'] <= sodium*ma)].copy()
     return foods
 
-# def make_graph(person): #person넣으면 자동으로 그래프 그려줌
-#     plt.figure(figsize=(12, 8))
-
-#     plt.subplot(2, 2, 1)
-#     plt.plot(person.today_kcal, label='칼로리', color='lime', marker='o', linestyle='-')
-#     plt.xlabel('식사 번호')
-#     plt.ylabel('칼로리 (kcal)')
-#     plt.title('오늘 섭취한 칼로리')
-#     plt.legend(loc='upper left')
-#     plt.ylim(0, 3000)
-#     for i in range(500, 3000, 500):
-#         plt.axhline(y=i, color='gray', linestyle='--', linewidth=0.5)
-
-#     labels = ['섭취량', '나머지']
-#     colors = ['#ff9999', '#66b3ff']
-#     explode = (0.1, 0)
-    
-#     wedgeprops = {'width' : 0.75}
-    
-#     plt.subplot(2, 2, 2)
-#     values = [sum(person.return_eat()[2]), 324 - sum(person.return_eat()[2])]
-#     plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=140, colors=colors, explode=explode,shadow=True)
-#     plt.title('탄수화물 섭취량')
-
-#     plt.subplot(2, 2, 3)
-#     values = [sum(person.return_eat()[1]), 55 - sum(person.return_eat()[1])]
-#     plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=140, colors=colors, explode=explode,shadow=True)
-#     plt.title('단백질 섭취량')
-    
-#     plt.subplot(2, 2, 4)
-#     values = [sum(person.return_eat()[3]), 54 - sum(person.return_eat()[3])]
-#     plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=140, colors=colors, explode=explode,shadow=True)
-#     plt.title('지방 섭취량')
-
-#     plt.tight_layout()
-#     plt.show()
-
 #df 3종류를 넣고 person을 받아서 추천
 def sort_and_merge(food_list, sor, col_name, ascending=True, percentage=0.3):
     im_list = sor.sort_values(by=col_name, ascending=ascending)
@@ -610,11 +573,11 @@ def nat_rec(person, df, df2, sor, case, med, mtf):
         if num == 1:  # 에너지 하위 30%
             merged_df = sort_and_merge(merged_df, sor, '에너지(kcal)', percentage=0.3)
         elif num == 2:  # 에너지 상위 30%
-            merged_df = sort_and_merge(merged_df, sor, '에너지(kcal)', ascending=False, percentage=0.3)
+            merged_df = sort_and_merge(merged_df, sor, '에너지(kcal)', ascending=False, percentage = 0.7)
         elif num == 3:  # 저지방
             merged_df = sort_and_merge(merged_df, sor, '지방(g)', percentage=0.7)
         elif num == 4:  # 고단백
-            merged_df = sort_and_merge(merged_df, sor, '단백질(g)', ascending=False, percentage=0.9999)
+            merged_df = sort_and_merge(merged_df, sor, '단백질(g)', ascending=False, percentage=0.8)
         elif num == 5:  # 저나트륨
             merged_df = sort_and_merge(merged_df, sor, '나트륨(mg)', percentage=0.3)
         elif num == 6:  # 저탄수화물

@@ -19,7 +19,7 @@ export default function Foodrecommend({navigation, route}) {
     console.log(email, todayDate, productName, amount, calories, calorieType);
     axios
       .get(
-        `http://192.168.0.11:3000/run-python-ocr2?email=${email}&date=${todayDate}
+        `http://192.168.35.196:3000/run-python-ocr2?email=${email}&date=${todayDate}
                &productName=${productName}&amount=${amount}&calories=${calories}&calorieType=${calorieType}`
       )
       .then((response) => {
