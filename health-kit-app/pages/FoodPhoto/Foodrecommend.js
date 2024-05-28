@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert} from 'react-native';
 import axios from 'axios';
 
 export default function Foodrecommend({navigation, route}) {
   const {email, todayDate, productName, amount, calories, calorieType} = route.params;
   const [loading, setLoading] = useState(true);
-  const [pythonData, setPythonData] = useState('');
+  const [pythonData, setPythonData] = useState([]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -19,7 +19,7 @@ export default function Foodrecommend({navigation, route}) {
     console.log(email, todayDate, productName, amount, calories, calorieType);
     axios
       .get(
-        `http://192.168.0.11:3000/run-python-ocr2?email=${email}&date=${todayDate}
+        `http://192.168.35.196:3000/run-python-ocr2?email=${email}&date=${todayDate}
                &productName=${productName}&amount=${amount}&calories=${calories}&calorieType=${calorieType}`
       )
       .then((response) => {

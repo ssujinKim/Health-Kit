@@ -29,7 +29,7 @@ export default function Recommendresult({navigation, route}) {
     });
 
     axios
-    .get(`http://192.168.0.11:3000/run-python-dr?email=${email}&date=${todayDate}&preferences=${preferences}`)
+    .get(`http://192.168.35.196:3000/run-python-dr?email=${email}&date=${todayDate}&preferences=${preferences}`)
     .then((response) => {
       if (!response.data) {
         console.error('No data received from server');

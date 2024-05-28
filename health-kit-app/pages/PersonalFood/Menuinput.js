@@ -67,7 +67,7 @@ export default function Menuinput({navigation, route}) {
     const fetchTotalInfo = async () => {
       if (!date) return; // date가 비어있는 경우 함수 실행 중지
 
-      const url = `http://192.168.0.11:3000/totalInfo?email=${encodeURIComponent(
+      const url = `http://192.168.35.196:3000/totalInfo?email=${encodeURIComponent(
         email
       )}&date=${encodeURIComponent(date)}`;
 
@@ -88,7 +88,7 @@ export default function Menuinput({navigation, route}) {
     };
 
     const fetchMealInfo = async () => {
-      const url = `http://192.168.0.11:3000/mealInfo?email=${email}&date=${encodeURIComponent(
+      const url = `http://192.168.35.196:3000/mealInfo?email=${email}&date=${encodeURIComponent(
         date
       )}`;
 
@@ -172,7 +172,7 @@ export default function Menuinput({navigation, route}) {
 
   // const deleteMeal = async (food_name, mealType) => {
   //   try {
-  //     await axios.post(`http://192.168.0.11:3000/deleteMeal?email=${email}&date=${(date)}&food_name=${(food_name)}&meal_type=${(mealType)}`);
+  //     await axios.post(`http://192.168.35.196:3000/deleteMeal?email=${email}&date=${(date)}&food_name=${(food_name)}&meal_type=${(mealType)}`);
   //     console.log('음식 삭제 완료');
   //     Alert.alert('완료', '음식 정보가 삭제되었습니다.', { text: '확인' });
 
@@ -196,10 +196,10 @@ export default function Menuinput({navigation, route}) {
           onPress: async () => {
             try {
               await axios.post(
-                `http://192.168.0.11:3000/deleteMeal?email=${email}&date=${date}&food_name=${food_name}&meal_type=${mealType}`
+                `http://192.168.35.196:3000/deleteMeal?email=${email}&date=${date}&food_name=${food_name}&meal_type=${mealType}`
               );
               console.log('음식 삭제 완료');
-              Alert.alert('완료', '음식 정보가 삭제되었습니다.', {text: '확인'});
+              Alert.alert('완료', '음식 정보가 삭제되었습니다.', [{text: '확인'}]);
               setDeleteRun((prev) => !prev);
             } catch (error) {
               console.error('음식 정보를 삭제하는 동안 에러가 발생했습니다:', error);
@@ -207,7 +207,7 @@ export default function Menuinput({navigation, route}) {
           },
         },
       ],
-      {cancelable: false} // 사용자가 다른 곳을 클릭해도 창이 닫히지 않게 설정
+      {cancelable: false}
     );
   };
 

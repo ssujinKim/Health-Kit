@@ -24,7 +24,7 @@ export default function Menuadd({navigation, route}) {
   const [protein, setProtein] = useState(''); // 단백질
   const [calcium, setCalcium] = useState(''); // 칼슘
   const [sodium, setSodium] = useState(''); // 나트륨
-  const [calories, setCalories] = useState('');
+  const [calories, setCalories] = useState(''); // 칼로리
 
   useEffect(() => {
     navigation.setOptions({
@@ -50,9 +50,9 @@ export default function Menuadd({navigation, route}) {
     try {
       console.log(route.params);
       const todayDate = getFormattedDate(); // 오늘 날짜를 구함
-      const response = await axios.post('http://192.168.0.11:3000/menuAdd', {
+      const response = await axios.post('http://192.168.35.196:3000/menuAdd', {
         email: email,
-        food: food,
+        food: food, // 음식명
         carbs: carbs, // 탄수화물
         sugars: sugars, // 당류
         fat: fat, // 지방
@@ -62,7 +62,7 @@ export default function Menuadd({navigation, route}) {
         protein: protein, // 단백질
         calcium: calcium, // 칼슘
         sodium: sodium, // 나트륨
-        calories: calories,
+        calories: calories, // 칼로리
         date: todayDate,
         meal_type: mealType,
       });
@@ -172,7 +172,7 @@ export default function Menuadd({navigation, route}) {
                 />
               </View>
               <View style={styles.inputContainer}>
-                <Text style={styles.textStyle}>칼로리(kcal)</Text>
+                <Text style={styles.textStyle}>칼로리(Kcal)</Text>
                 <TextInput
                   style={styles.input}
                   underlineColorAndroid="transparent"

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, Modal, View, Pressable, Text, Alert} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {Ionicons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
@@ -29,7 +29,7 @@ function UploadMode({visible, onClose, email, productName, amount, calories, cal
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.cancelled && result.assets) {
       const uri = result.assets[0].uri;
       setImage(uri);
       uploadImage(uri);
@@ -45,7 +45,7 @@ function UploadMode({visible, onClose, email, productName, amount, calories, cal
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.cancelled && result.assets) {
       const uri = result.assets[0].uri;
       setImage(uri);
       uploadImage(uri);
@@ -62,7 +62,7 @@ function UploadMode({visible, onClose, email, productName, amount, calories, cal
     });
 
     try {
-      const response = await axios.post('http://192.168.0.11:3000/imageUpload', formData, {
+      const response = await axios.post('http://192.168.35.196:3000/imageUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -92,7 +92,7 @@ function UploadMode({visible, onClose, email, productName, amount, calories, cal
             android_ripple={{color: '#eee'}}
             onPress={takeAndCropPhoto}
           >
-            <Icon name="camera-alt" color="#757575" size={24} style={styles.icon} />
+            <Ionicons name="camera" color="#757575" size={24} style={styles.icon} />
             <Text style={styles.actionText}>카메라로 촬영하기</Text>
           </Pressable>
           <Pressable
@@ -100,7 +100,7 @@ function UploadMode({visible, onClose, email, productName, amount, calories, cal
             android_ripple={{color: '#eee'}}
             onPress={selectPhoto}
           >
-            <Icon name="photo" color="#757575" size={24} style={styles.icon} />
+            <Ionicons name="image" color="#757575" size={24} style={styles.icon} />
             <Text style={styles.actionText}>사진 선택하기</Text>
           </Pressable>
         </View>

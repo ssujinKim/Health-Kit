@@ -45,7 +45,7 @@ export default function Mypage({navigation, route}) {
 
     // fetchUserInfo 함수를 정의
     const fetchUserInfo = () => {
-      const url = `http://192.168.0.11:3000/userInfo?email=${encodeURIComponent(email)}`;
+      const url = `http://192.168.35.196:3000/userInfo?email=${encodeURIComponent(email)}`;
 
       axios
         .get(url)
@@ -73,6 +73,18 @@ export default function Mypage({navigation, route}) {
     // useEffect 내부에서 fetchUserInfo를 호출하여 사용자 정보를 가져옴
     fetchUserInfo();
   }, [userInfo]);
+
+  const safeMedicine1 = medicine1 || '';
+  const safeMedicine2 = medicine2 || '';
+  const safeMedicine3 = medicine3 || '';
+
+  const medicine1Display = safeMedicine1.indexOf('(') !== -1 ? safeMedicine1.substring(0, safeMedicine1.indexOf('(')) : safeMedicine1;
+  const medicine2Display = safeMedicine2.indexOf('(') !== -1 ? safeMedicine2.substring(0, safeMedicine2.indexOf('(')) : safeMedicine2;
+  const medicine3Display = safeMedicine3.indexOf('(') !== -1 ? safeMedicine3.substring(0, safeMedicine3.indexOf('(')) : safeMedicine3;
+
+  const diseaseContainerStyle = {
+    marginBottom: disease1 === null ? 0 : 20,
+  };
 
   return (
     <View style={styles.container}>
@@ -110,7 +122,7 @@ export default function Mypage({navigation, route}) {
           <Text style={styles.statusInput}>나이</Text>
           <Text style={styles.statusOutput}>{age}세</Text>
         </View>
-        <View style={styles.statusContainer}>
+        <View style={[styles.statusContainer, diseaseContainerStyle]}>
           <Text style={styles.statusInput}>질병</Text>
           <Text style={styles.statusOutput}>
             {disease1}
@@ -123,19 +135,19 @@ export default function Mypage({navigation, route}) {
         <View style={styles.statusContainer}>
           <Text style={styles.statusInput}>복용중인 약</Text>
           <Text style={styles.statusOutput}>
-            {medicine1}
+            {medicine1Display}
             {'\n'}
-            {medicine2}
+            {medicine2Display}
             {'\n'}
-            {medicine3}
+            {medicine3Display}
           </Text>
         </View>
       </View>
-      <View style={styles.horizontalLine2} />
+      {/* <View style={styles.horizontalLine2} />
       <View style={styles.adviceContent}>
         <Ionicons name="chatbubbles" size={28} color="black" />
         <Text style={styles.info}>진행중인 상담</Text>
-      </View>
+      </View> */}
     </View>
   );
 }
@@ -171,14 +183,14 @@ const styles = StyleSheet.create({
     width: '95%',
     alignSelf: 'center',
   },
-  horizontalLine2: {
-    position: 'absolute',
-    top: 500, // 이메일 텍스트 아래에 위치하도록 설정
-    borderBottomColor: 'lightgray',
-    borderBottomWidth: 1,
-    width: '95%',
-    alignSelf: 'center',
-  },
+  // horizontalLine2: {
+  //   position: 'absolute',
+  //   top: 500, // 이메일 텍스트 아래에 위치하도록 설정
+  //   borderBottomColor: 'lightgray',
+  //   borderBottomWidth: 1,
+  //   width: '95%',
+  //   alignSelf: 'center',
+  // },
   diseaseContent: {
     position: 'absolute',
     top: 140,
@@ -214,7 +226,7 @@ const styles = StyleSheet.create({
     right: 0,
     fontSize: 20,
     marginBottom: 40,
-    width: '45%',
+    width: '55%',
   },
   adviceContent: {
     position: 'absolute',

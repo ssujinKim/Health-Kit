@@ -49,10 +49,11 @@ export default function DietRecommend({navigation, route}) {
       .map(([key, value]) => key);
 
     if (filteredPreferences.length === 0) {
-      Alert.alert('경고', '최소 하나의 식단 유형을 선택해주세요.');
+      Alert.alert('알림', '최소 하나의 식단 유형을 선택해주세요.');
       return;
     }
 
+    console.log(filteredPreferences);
     navigation.navigate('RecommendresultPage', {email: email, preferences: filteredPreferences});
   };
 

@@ -224,7 +224,8 @@ app.post('/menuAdd', async (req, res) => {
 
   try {
     await db.query(
-      'INSERT INTO users_diet (user_email, date, meal_type, food_name, kcal, carbs, protein, fat) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO users_diet (user_email, date, meal_type, food_name, kcal, carbs, ' +
+          'sugars, fat, trans_fat, saturated_fat, cholesterol, protein, calcium, sodium) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         menuInfo.email,
         menuInfo.date,
@@ -232,8 +233,14 @@ app.post('/menuAdd', async (req, res) => {
         menuInfo.food,
         menuInfo.calories,
         menuInfo.carbs,
-        menuInfo.protein,
+        menuInfo.sugars,
         menuInfo.fat,
+        menuInfo.transfat,
+        menuInfo.saturatedfat,
+        menuInfo.choles,
+        menuInfo.protein,
+        menuInfo.calcium,
+        menuInfo.sodium,
       ]
     );
     console.log('사용자의 식단 정보가 업데이트되었습니다.');
